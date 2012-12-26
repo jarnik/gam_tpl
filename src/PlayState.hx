@@ -30,6 +30,13 @@ class PlayState extends FlxState
         spellCastSignaler.dispatch( 3 );
         
         //Actuate.tween( this, 0.3, { scaleX: 1 } );
+
+        // generator seeding
+        FlxG.log("random hash "+ Generator.getRandomHash() );
+        Generator.init("kokodak");
+        for ( i in 0...10 )
+            FlxG.log("number "+(Generator.random()*100));
+
 	}
 
     private function onSpellCast( q:Int):Void {

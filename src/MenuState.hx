@@ -22,6 +22,8 @@ class MenuState extends FlxState
 		FlxG.bgColor = {rgb: 0x131c1b, a: 0xff};
 		#end		
 		FlxG.mouse.show();
+
+        FlxG.switchState( new PlayState() );
 	}
 	
 	override public function destroy():Void

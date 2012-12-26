@@ -54,6 +54,7 @@
 	<haxelib name="flixel"/>
 	<haxelib name="haxe-ga"/>
     <haxelib name="hsl-1" />
+    <haxelib name="actuate" />
 
     <haxedef name="network-sandbox" />
 

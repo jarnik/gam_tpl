@@ -5,7 +5,7 @@ x menu state
 x play state
 x end state
 x tweening test http://lib.haxe.org/p/actuate
-- generator + hash test
+x generator + hash test
 - parented group moving
 - on the fly resizing
 - faxe svg draw()
