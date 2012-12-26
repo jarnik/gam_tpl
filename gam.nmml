@@ -53,6 +53,7 @@
 	<haxelib name="nme" />
 	<haxelib name="flixel"/>
 	<haxelib name="haxe-ga"/>
+    <haxelib name="hsl-1" />
 
     <haxedef name="network-sandbox" />
 
