@@ -34,8 +34,11 @@ class Main extends Sprite
 		
 		initialize();
 		
-		var demo:FlxGame = new ProjectClass();
+		var demo:GAM = new GAM( "gam-tpl" );
 		addChild(demo);
+
+        // tracker test
+        //demo.track("start level 0");
 		
 		#if (cpp || neko)
 		Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUP);
