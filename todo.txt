@@ -4,7 +4,7 @@ x signals example http://lib.haxe.org/p/hsl-1
 x menu state
 x play state
 x end state
-x tweening test
+x tweening test http://lib.haxe.org/p/actuate
 - generator + hash test
 - parented group moving
 - on the fly resizing
