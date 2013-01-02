@@ -1,6 +1,7 @@
 package;
 
 import nme.Assets;
+import nme.display.DisplayObjectContainer;
 import nme.geom.Rectangle;
 import nme.net.SharedObject;
 import org.flixel.FlxButton;
@@ -16,6 +17,9 @@ import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
 import com.eclecticdesignstudio.motion.Actuate;
+
+import faxe.core.Layout;
+import faxe.core.FaXe;
 
 class PlayState extends FlxState
 {
@@ -36,6 +40,14 @@ class PlayState extends FlxState
         Generator.init("kokodak");
         for ( i in 0...10 )
             FlxG.log("number "+(Generator.random()*100));
+
+
+        add( new FlxSprite( "assets/planetix_logo.png" ) );
+
+        // FaXe layout
+        var layout:Layout = FaXe.load("assets/layouts/layout.xcf");
+        var gui:DisplayObjectContainer = layout.render();
+        FlxG._game.addChild( gui ); 
 
 	}
 
