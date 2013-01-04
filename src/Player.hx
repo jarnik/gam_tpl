@@ -20,7 +20,7 @@ class Player extends FlxSprite
 
 	public function new():Void {
         super( 0, 0, "assets/player.png" );
-        speed = 0.4;
+        speed = 0.7;
         t = -1;
         entry = BOTTOM;
         exit = TOP;
@@ -42,12 +42,15 @@ class Player extends FlxSprite
         var angle:Float = 0;
         var d:Float = 0;
         var tileSize:Float = Board.TILE_SIZE;
+        var faceAngle:Float = 0;
 
         d = tileSize * Math.abs( t - 0.5 );
         if ( t < 0.5 ) {
             angle = Tile.getWayAngle( entry );
+            faceAngle = angle + Math.PI;
         } else if ( t < 1 ) {
             angle = Tile.getWayAngle( exit );
+            faceAngle = angle;
         } else
             return;
 
@@ -55,7 +58,7 @@ class Player extends FlxSprite
             //FlxG.log(" entry "+entry+" exit "+exit+" t "+t+" d "+d+" angle "+angle);
             x = currentTile.x + Math.sin( angle ) * d;
             y = currentTile.y - Math.cos( angle ) * d;
-            //this.angle = angle + Math.PI;
+            this.angle = faceAngle/Math.PI*180;
         }
     }
 

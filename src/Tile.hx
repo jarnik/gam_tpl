@@ -27,7 +27,7 @@ class Tile extends FlxSprite, implements IGrid
     public var wayConfig:Array<WAY>;
 
     private var ways:Array<FlxSprite>;
-    private var center:FlxSprite;
+    private var tileFrame:FlxSprite;
 
 	public function new():Void {
         super( 0, 0, "assets/tile_grass.png" );
@@ -63,9 +63,13 @@ class Tile extends FlxSprite, implements IGrid
             addCentralPiece( false, 0 );
         if ( hasWay( LEFT ) && hasWay( RIGHT ) )
             addCentralPiece( false, 90 );
+
+        tileFrame = new FlxSprite( 0, 0, "assets/tile_frame.png" );
+        tileFrame.offset = offset;
+        tileFrame.alpha = 0.5;
     }
 
-    private function hasWay( w:WAY ):Bool {
+    public function hasWay( w:WAY ):Bool {
         for ( way in wayConfig )
             if ( way == w )
                 return true;
@@ -84,11 +88,22 @@ class Tile extends FlxSprite, implements IGrid
         ways.push( w );
     }
 
+    public function addWay( w:WAY ):Void {
+        wayConfig.remove( w );
+        wayConfig.push( w );
+    }
+
+    public function removeWay( w:WAY ):Void {
+        wayConfig.remove( w );
+    }
+
     override public function update():Void {
         for ( w in ways ) {
             w.x = x;
             w.y = y;
         }
+        tileFrame.x = x;
+        tileFrame.y = y;
         super.update();
     }
 
@@ -97,6 +112,7 @@ class Tile extends FlxSprite, implements IGrid
         for ( w in ways ) {
             w.draw();
         }
+        tileFrame.draw();
 
     }
 

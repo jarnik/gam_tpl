@@ -41,12 +41,35 @@ class Board extends FlxGroup
             for ( x in 0...COLUMNS ) {
                 t = new Tile();
                 t.wayConfig = [ TOP, BOTTOM ];
-                t.updateWays();
                 addTile( x, y, t );
                 row.push( t );
             }
             map.push( row );
         }
+
+        var w:WAY;
+        for ( y in 0...ROWS ) {
+            for ( x in 0...COLUMNS ) {
+                t = getTile( x, y );
+                if ( Math.random() < 0.3 ) {
+                    if ( Math.random() > 0.5 )
+                        t.removeWay( TOP );
+                    w = Math.random() > 0.5 ? LEFT: RIGHT;
+                    t.addWay( w );
+                    t = getTile( t.gx + ( w == LEFT ? -1 : 1 ), t.gy );
+                    if ( t != null ) {
+                        if ( Math.random() > 0.5 )
+                            t.removeWay( BOTTOM );
+                        t.addWay( Tile.invertWay( w ) );
+                    }
+                }
+            }
+        }
+
+        for ( y in 0...ROWS )
+            for ( x in 0...COLUMNS ) 
+                getTile( x,y ).updateWays();
+
     }
 
     private function addTile( x:Int, y:Int, t:Tile ):Void {
@@ -58,6 +81,8 @@ class Board extends FlxGroup
     }
 
     public function getTile( x:Int, y:Int ):Tile {
+        if ( x < 0 || x >= COLUMNS || y < 0 || y >= ROWS )
+            return null;
         return map[y][x];
     }
 
@@ -66,6 +91,11 @@ class Board extends FlxGroup
             findNextStep();
         }
         super.update();
+    }
+
+    private function crash():Void {
+        player.kill();
+        FlxG.log("crash");
     }
 
     private function findNextStep():Void {
@@ -79,14 +109,19 @@ class Board extends FlxGroup
         dx += player.currentTile.gx; 
         dy += player.currentTile.gy; 
 
-        if ( dx < 0 || dx >= COLUMNS || dy < 0 || dy >= ROWS ) {
-            player.kill();
-            FlxG.log("crash");
+        newTile = getTile( dx, dy );
+        if ( newTile == null ) {
+            crash();
             return;
         }
 
-        newTile = getTile( dx, dy );
         entry = Tile.invertWay( player.exit );
+
+        if  ( !newTile.hasWay( entry ) ) {
+            crash();
+            return;
+        }
+
         var openWays:Array<WAY> = [];
         for ( w in newTile.wayConfig ) {
             if ( w == entry )
