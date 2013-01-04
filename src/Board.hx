@@ -88,6 +88,10 @@ class Board extends FlxGroup
 
     private function addTile( x:Int, y:Int, t:Tile ):Void {
         tileLayer.add( t );
+        moveTile( x, y, t );
+    }
+
+    private function moveTile( x:Int, y:Int, t:Tile ):Void {
         t.gx = x;
         t.gy = y;
         t.x = TILE_SIZE/2 + x*TILE_SIZE;
@@ -110,6 +114,22 @@ class Board extends FlxGroup
     public function setFocused( index:Int ):Void {
         focused = Math.round( Math.min( ROWS-1, Math.max( 0, index ) ) );
         updateFocus();
+    }
+
+    public function moveRow( step:Int ):Void {
+        var row:Array<Tile> = map[ focused ];
+        var t:Tile;
+        
+        if ( step == 1 ) {
+            t = row.pop();
+            row.unshift( t );
+        } else {
+            t = row.shift();
+            row.push( t );
+        }
+        for ( i in 0...row.length ) {
+            moveTile( i, focused, row[ i ] );             
+        }
     }
     
     private function updateFocus():Void {

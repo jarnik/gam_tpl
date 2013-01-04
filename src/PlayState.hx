@@ -63,6 +63,10 @@ class PlayState extends FlxState
             board.setFocused( board.focused-1 );
         if ( FlxG.keys.justPressed( "DOWN" )  )
             board.setFocused( board.focused+1 );
+        if ( FlxG.keys.justPressed( "LEFT" )  )
+            board.moveRow( -1 );
+        if ( FlxG.keys.justPressed( "RIGHT" )  )
+            board.moveRow( 1 );
 
         super.update();
     }
