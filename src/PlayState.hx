@@ -26,32 +26,40 @@ class PlayState extends FlxState
 
 	override public function create():Void
 	{
+        /*
         spellCastSignaler = new DirectSignaler(this);
 		
         spellCastSignaler.bind( onSpellCast );
         spellCastSignaler.dispatch( 3 );
+        */
         
         //Actuate.tween( this, 0.3, { scaleX: 1 } );
 
         // generator seeding
+        /*
         FlxG.log("random hash "+ Generator.getRandomHash() );
         Generator.init("kokodak");
         for ( i in 0...10 )
             FlxG.log("number "+(Generator.random()*100));
-
+        */
 
         //add( new FlxSprite( "assets/planetix_logo.png" ) );
 
+        /*
         var t:Tile = new Tile();
         add( t );
         t.x = 16;
-        t.y = 16;
+        t.y = 16;*/
+
+        var board:Board = new Board();
+        add( board );
         
 	}
 
+    /*
     private function onSpellCast( q:Int):Void {
         // TODO
         FlxG.log("magic: "+q);
-    }
+    }*/
 	
 }

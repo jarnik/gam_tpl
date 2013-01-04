@@ -3,6 +3,9 @@ package;
 import nme.Lib;
 import org.flixel.FlxGame;
 import org.flixel.FlxG;
+import org.flixel.FlxSprite;
+
+import Tile; 
 	
 class Player extends FlxSprite
 {	
@@ -17,10 +20,12 @@ class Player extends FlxSprite
 
 	public function new():Void {
         super( 0, 0, "assets/player.png" );
-        speed = 10;
+        speed = 0.4;
         t = -1;
         entry = BOTTOM;
         exit = TOP;
+        offset.x = Board.TILE_SIZE/2;
+        offset.y = Board.TILE_SIZE/2;
 	}
 
     override public function update():Void {
@@ -28,6 +33,7 @@ class Player extends FlxSprite
         
         if ( t >= 0 ) {
             t += FlxG.elapsed * speed;
+            //FlxG.log("t "+t+" curr "+currentTile);
             updatePosition();
         }
     }
@@ -35,20 +41,22 @@ class Player extends FlxSprite
     private function updatePosition():Void {
         var angle:Float = 0;
         var d:Float = 0;
-        var tileSize:Float = 32;
+        var tileSize:Float = Board.TILE_SIZE;
 
+        d = tileSize * Math.abs( t - 0.5 );
         if ( t < 0.5 ) {
             angle = Tile.getWayAngle( entry );
-            d = tileSize*0.5 * (1 - t);
         } else if ( t < 1 ) {
             angle = Tile.getWayAngle( exit );
-            d = tileSize*0.5 * (t - 0.5);
         } else
             return;
 
-        x = currentTile.x + Math.sin( angle ) * d;
-        y = currentTile.y - Math.cos( angle ) * d;
-        this.angle = angle + Math.PI;
+        if ( currentTile != null ) {
+            //FlxG.log(" entry "+entry+" exit "+exit+" t "+t+" d "+d+" angle "+angle);
+            x = currentTile.x + Math.sin( angle ) * d;
+            y = currentTile.y - Math.cos( angle ) * d;
+            //this.angle = angle + Math.PI;
+        }
     }
 
     public function pendingSwap():Bool {
@@ -58,8 +66,8 @@ class Player extends FlxSprite
     public function enterNewTile( tile:Tile, next:Tile ):Void {
         if ( currentTile != null ) {
             entry = Tile.getEntryWay( currentTile, tile );
-            currentTile = t;
         }
+        currentTile = tile;
         this.nextTile = next;
         exit = Tile.getExitWay( tile, next );
         t = 0;

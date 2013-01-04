@@ -19,7 +19,7 @@ typedef WAY_CONFIG = {
     left: Bool
 }
 
-class Tile extends FlxSprite
+class Tile extends FlxSprite, implements IGrid
 {	
   
     public var gx:Int;
@@ -34,9 +34,7 @@ class Tile extends FlxSprite
         offset.x = 16;
         offset.y = 16;
 
-        wayConfig = [ BOTTOM, TOP ];
-
-        updateWays();
+        wayConfig = [];
 	}
 
     public function updateWays():Void {
