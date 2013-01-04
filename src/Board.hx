@@ -42,8 +42,8 @@ class Board extends FlxGroup
 	}
 
     private function restart():Void {
-        for ( t in tileLayer )
-            tileLayer.remove( t, true );
+        while ( tileLayer.length > 0 )
+            tileLayer.remove( tileLayer.members[ 0 ], true );
         map = [];
         build();
         player.enterNewTile( 
@@ -163,6 +163,9 @@ class Board extends FlxGroup
         var dy:Int = Math.round( -Math.cos( newTileAngle ) );
         dx += player.currentTile.gx; 
         dy += player.currentTile.gy; 
+
+        dx = (dx + COLUMNS) % COLUMNS;
+        dy = (dy + ROWS) % ROWS;
 
         newTile = getTile( dx, dy );
         if ( newTile == null ) {
