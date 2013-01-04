@@ -36,6 +36,14 @@ class Board extends FlxGroup
 
         add( player = new Player() );
 
+        restart();
+
+        updateFocus();
+	}
+
+    private function restart():Void {
+        for ( t in tileLayer )
+            tileLayer.remove( t, true );
         map = [];
         build();
         player.enterNewTile( 
@@ -44,8 +52,7 @@ class Board extends FlxGroup
             TOP
         );
 
-        updateFocus();
-	}
+    }
 
     public function build():Void {
         var t:Tile;
@@ -141,7 +148,8 @@ class Board extends FlxGroup
     }
 
     private function crash():Void {
-        player.kill();
+        restart();
+        //player.kill();
         FlxG.log("crash");
     }
 
