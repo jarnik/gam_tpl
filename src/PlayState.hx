@@ -18,8 +18,6 @@ import hsl.haxe.Signaler;
 
 import com.eclecticdesignstudio.motion.Actuate;
 
-import faxe.core.Layout;
-import faxe.core.FaXe;
 
 class PlayState extends FlxState
 {
@@ -42,13 +40,13 @@ class PlayState extends FlxState
             FlxG.log("number "+(Generator.random()*100));
 
 
-        add( new FlxSprite( "assets/planetix_logo.png" ) );
+        //add( new FlxSprite( "assets/planetix_logo.png" ) );
 
-        // FaXe layout
-        var layout:Layout = FaXe.load("assets/layouts/layout.xcf");
-        var gui:DisplayObjectContainer = layout.render();
-        FlxG._game.addChild( gui ); 
-
+        var t:Tile = new Tile();
+        add( t );
+        t.x = 16;
+        t.y = 16;
+        
 	}
 
     private function onSpellCast( q:Int):Void {
