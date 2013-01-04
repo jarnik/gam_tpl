@@ -11,7 +11,7 @@ class Player extends FlxSprite
 {	
   
     public var currentTile:Tile;
-    public var nextTile:Tile;
+    //public var nextTile:Tile;
     public var entry:WAY;
     public var exit:WAY;
     public var t:Float;
@@ -63,13 +63,16 @@ class Player extends FlxSprite
         return t > 1;
     }
 
-    public function enterNewTile( tile:Tile, next:Tile ):Void {
+    public function enterNewTile( tile:Tile, entry:WAY, exit:WAY ):Void {
+        /*
         if ( currentTile != null ) {
             entry = Tile.getEntryWay( currentTile, tile );
-        }
+        }*/
         currentTile = tile;
-        this.nextTile = next;
-        exit = Tile.getExitWay( tile, next );
+        this.entry = entry;
+        this.exit = exit;
+        //this.nextTile = next;
+        //exit = Tile.getExitWay( tile, next );
         t = 0;
     }
 

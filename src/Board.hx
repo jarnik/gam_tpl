@@ -4,6 +4,8 @@ import nme.Lib;
 import org.flixel.FlxGame;
 import org.flixel.FlxG;
 import org.flixel.FlxGroup;
+
+import Tile;
 	
 class Board extends FlxGroup
 {	
@@ -26,7 +28,8 @@ class Board extends FlxGroup
         build();
         player.enterNewTile( 
             getTile( 0, 3 ),
-            getTile( 0, 2 )
+            BOTTOM,
+            TOP
         );
 	}
 
@@ -60,9 +63,39 @@ class Board extends FlxGroup
 
     public override function update():Void {
         if ( player.pendingSwap() ) {
-            player.enterNewTile( player.nextTile, getTile( 0, player.nextTile.gy-1 ) );
+            findNextStep();
         }
         super.update();
+    }
+
+    private function findNextStep():Void {
+        var newTile:Tile;
+        var entry:WAY;
+        var exit:WAY;
+
+        var newTileAngle:Float = Tile.getWayAngle( player.exit );
+        var dx:Int = Math.round( Math.sin( newTileAngle ) );
+        var dy:Int = Math.round( -Math.cos( newTileAngle ) );
+        dx += player.currentTile.gx; 
+        dy += player.currentTile.gy; 
+
+        if ( dx < 0 || dx >= COLUMNS || dy < 0 || dy >= ROWS ) {
+            player.kill();
+            FlxG.log("crash");
+            return;
+        }
+
+        newTile = getTile( dx, dy );
+        entry = Tile.invertWay( player.exit );
+        var openWays:Array<WAY> = [];
+        for ( w in newTile.wayConfig ) {
+            if ( w == entry )
+                continue;
+            openWays.push( w );
+        }
+        exit = openWays[ Math.floor( Math.random() * openWays.length ) ];
+
+        player.enterNewTile( newTile, entry, exit );
     }
 
 }

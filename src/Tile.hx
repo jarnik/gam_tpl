@@ -124,6 +124,16 @@ class Tile extends FlxSprite, implements IGrid
         return BOTTOM;
     }
 
+    public static function invertWay( w:WAY ):WAY {
+        switch ( w ) {
+            case TOP: return BOTTOM;
+            case BOTTOM: return TOP;
+            case RIGHT: return LEFT;
+            case LEFT: return RIGHT;
+        }
+        return TOP;
+    }
+
     public static function getWayAngle( w:WAY ):Float {
         switch ( w ) {
             case TOP: return 0;
