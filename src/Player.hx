@@ -20,7 +20,7 @@ class Player extends FlxSprite
 
 	public function new():Void {
         super( 0, 0, "assets/player.png" );
-        speed = 0.7;
+        speed = 0.8;
         t = -1;
         entry = BOTTOM;
         exit = TOP;
