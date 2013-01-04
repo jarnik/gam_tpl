@@ -9,10 +9,16 @@ import org.flixel.tweens.motion.LinearMotion;
 import org.flixel.tweens.util.Ease;
 import org.flixel.tweens.FlxTween;
 
+import hsl.haxe.DirectSignaler;
+import hsl.haxe.Signaler;
+
 import Tile;
 	
 class Board extends FlxGroup
 {	
+    // signals
+    public var crashSignaler(default, null):Signaler<Void>;
+
     public static inline var ROWS:Int = 7;
     public static inline var COLUMNS:Int = 7;
     public static inline var TILE_SIZE:Float = 32;
@@ -38,6 +44,10 @@ class Board extends FlxGroup
         focused = 4;
 
         add( player = new Player() );
+
+        crashSignaler = new DirectSignaler(this);
+        crashSignaler.bindVoid( crash );
+        player.crashSignaler.bindVoid( crash );
 
         restart();
 
@@ -223,7 +233,7 @@ class Board extends FlxGroup
 
         newTile = getTile( dx, dy );
         if ( newTile == null ) {
-            crash();
+            crashSignaler.dispatch();
             return;
         }
 
@@ -234,7 +244,7 @@ class Board extends FlxGroup
                 win();
                 return;
             } else {
-                crash();
+                crashSignaler.dispatch();
                 return;
             }
         }
@@ -250,7 +260,10 @@ class Board extends FlxGroup
                 continue;
             openWays.push( w );
         }
-        exit = openWays[ Math.floor( Math.random() * openWays.length ) ];
+        if ( openWays.length == 0 )
+            exit = NOWAY;
+        else
+            exit = openWays[ Math.floor( Math.random() * openWays.length ) ];
 
         player.enterNewTile( newTile, entry, exit );
     }

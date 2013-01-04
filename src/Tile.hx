@@ -10,6 +10,7 @@ enum WAY {
     RIGHT;
     BOTTOM;
     LEFT;
+    NOWAY;
 }
 
 typedef WAY_CONFIG = {
@@ -157,6 +158,7 @@ class Tile extends FlxSprite, implements IGrid
             case BOTTOM: return TOP;
             case RIGHT: return LEFT;
             case LEFT: return RIGHT;
+            default: return NOWAY;
         }
         return TOP;
     }
@@ -167,6 +169,7 @@ class Tile extends FlxSprite, implements IGrid
             case BOTTOM: return Math.PI;
             case RIGHT: return Math.PI/2;
             case LEFT: return Math.PI/2*3;
+            default: return 0;
         }
         return 0;
     }
