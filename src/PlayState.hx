@@ -22,7 +22,9 @@ import com.eclecticdesignstudio.motion.Actuate;
 class PlayState extends FlxState
 {
     // signals
-    public var spellCastSignaler(default, null):Signaler<Int>;
+    //public var spellCastSignaler(default, null):Signaler<Int>;
+        
+    private var board:Board;
 
 	override public function create():Void
 	{
@@ -51,10 +53,19 @@ class PlayState extends FlxState
         t.x = 16;
         t.y = 16;*/
 
-        var board:Board = new Board();
+        board = new Board();
         add( board );
         
 	}
+
+    override public function update():Void {
+        if ( FlxG.keys.justPressed( "UP" )  )
+            board.setFocused( board.focused-1 );
+        if ( FlxG.keys.justPressed( "DOWN" )  )
+            board.setFocused( board.focused+1 );
+
+        super.update();
+    }
 
     /*
     private function onSpellCast( q:Int):Void {

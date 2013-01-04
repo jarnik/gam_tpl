@@ -4,6 +4,10 @@ import nme.Lib;
 import org.flixel.FlxGame;
 import org.flixel.FlxG;
 import org.flixel.FlxGroup;
+import org.flixel.FlxSprite;
+import org.flixel.tweens.motion.LinearMotion;
+import org.flixel.tweens.util.Ease;
+import org.flixel.tweens.FlxTween;
 
 import Tile;
 	
@@ -18,10 +22,18 @@ class Board extends FlxGroup
     //public var map:Hash<Tile>;
     public var map:Array<Array<Tile>>;
 
+    private var focus:FlxSprite;
+    public var focused:Int;
+
 	public function new():Void {
         super();
 
         add( tileLayer = new FlxGroup() );
+
+        add( focus = new FlxSprite() );
+        focus.makeGraphic( COLUMNS*TILE_SIZE, TILE_SIZE, 0x80800080 );
+        focused = 4;
+
         add( player = new Player() );
 
         map = [];
@@ -31,6 +43,8 @@ class Board extends FlxGroup
             BOTTOM,
             TOP
         );
+
+        updateFocus();
 	}
 
     public function build():Void {
@@ -91,6 +105,19 @@ class Board extends FlxGroup
             findNextStep();
         }
         super.update();
+    }
+
+    public function setFocused( index:Int ):Void {
+        focused = Math.round( Math.min( ROWS-1, Math.max( 0, index ) ) );
+        updateFocus();
+    }
+    
+    private function updateFocus():Void {
+        /*var mt:LinearMotion = new LinearMotion( FlxTween.ONESHOT );
+        mt.setMotion( 0, focus.y, 0, TILE_SIZE*focused, 1, Ease.quadIn );
+        focus.addTween( mt, true );
+        */
+        focus.y = TILE_SIZE*focused;
     }
 
     private function crash():Void {
