@@ -67,6 +67,7 @@ class Tile extends FlxSprite, implements IGrid
         tileFrame = new FlxSprite( 0, 0, "assets/tile_frame.png" );
         tileFrame.offset = offset;
         tileFrame.alpha = 0.5;
+        move( gx, gy );
     }
 
     public function hasWay( w:WAY ):Bool {
@@ -97,13 +98,23 @@ class Tile extends FlxSprite, implements IGrid
         wayConfig.remove( w );
     }
 
-    override public function update():Void {
-        for ( w in ways ) {
-            w.x = x;
-            w.y = y;
+    public function move( x:Int, y:Int ):Void {
+        gx = x;
+        gy = y;
+        this.x = Board.TILE_SIZE/2 + x*Board.TILE_SIZE;
+        this.y = Board.TILE_SIZE/2 + y*Board.TILE_SIZE;
+
+        if ( ways != null ) {
+            for ( w in ways ) {
+                w.x = this.x;
+                w.y = this.y;
+            }
+            tileFrame.x = this.x;
+            tileFrame.y = this.y;
         }
-        tileFrame.x = x;
-        tileFrame.y = y;
+    }
+
+    override public function update():Void {
         super.update();
     }
 

@@ -13,8 +13,8 @@ import Tile;
 	
 class Board extends FlxGroup
 {	
-    public static inline var ROWS:Int = 5;
-    public static inline var COLUMNS:Int = 5;
+    public static inline var ROWS:Int = 7;
+    public static inline var COLUMNS:Int = 7;
     public static inline var TILE_SIZE:Float = 32;
 
     public var player:Player;
@@ -95,14 +95,7 @@ class Board extends FlxGroup
 
     private function addTile( x:Int, y:Int, t:Tile ):Void {
         tileLayer.add( t );
-        moveTile( x, y, t );
-    }
-
-    private function moveTile( x:Int, y:Int, t:Tile ):Void {
-        t.gx = x;
-        t.gy = y;
-        t.x = TILE_SIZE/2 + x*TILE_SIZE;
-        t.y = TILE_SIZE/2 + y*TILE_SIZE;
+        t.move( x, y );
     }
 
     public function getTile( x:Int, y:Int ):Tile {
@@ -119,7 +112,7 @@ class Board extends FlxGroup
     }
 
     public function setFocused( index:Int ):Void {
-        focused = Math.round( Math.min( ROWS-1, Math.max( 0, index ) ) );
+        focused = (index + ROWS) % ROWS;
         updateFocus();
     }
 
@@ -135,7 +128,7 @@ class Board extends FlxGroup
             row.push( t );
         }
         for ( i in 0...row.length ) {
-            moveTile( i, focused, row[ i ] );             
+            row[ i ].move( i, focused );
         }
     }
     
