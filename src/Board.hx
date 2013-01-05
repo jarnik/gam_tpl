@@ -13,6 +13,12 @@ import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
 import Tile;
+
+enum PLAY_STATE {
+    STATE_PLAY;
+    STATE_WIN;
+    STATE_FAIL;
+}
 	
 class Board extends FlxGroup
 {	
@@ -23,7 +29,10 @@ class Board extends FlxGroup
     public static inline var COLUMNS:Int = 7;
     public static inline var TILE_SIZE:Float = 32;
 
+    private var state:PLAY_STATE;
+
     public var player:Player;
+    public var crashSprite:Crash;
     public var tileLayer:FlxGroup;
     public var coinLayer:FlxGroup;
     public var map:Array<Array<Tile>>;
@@ -55,6 +64,9 @@ class Board extends FlxGroup
 	}
 
     private function restart():Void {
+        state = STATE_PLAY;
+        player.visible = true;
+
         while ( tileLayer.length > 0 )
             tileLayer.remove( tileLayer.members[ 0 ], true );
         while ( coinLayer.length > 0 )
@@ -144,10 +156,12 @@ class Board extends FlxGroup
     }
 
     public override function update():Void {
-        if ( player.pendingSwap() ) {
-            findNextStep();
+        if ( state == STATE_PLAY ) {
+            if ( player.pendingSwap() ) {
+                findNextStep();
+            }
+            checkCoins();
         }
-        checkCoins();
         super.update();
     }
 
@@ -201,13 +215,20 @@ class Board extends FlxGroup
     }
 
     private function crash():Void {
-        restart();
+        state = STATE_FAIL;
+        player.visible = false;
+        if ( crashSprite != null )
+            remove( crashSprite );
+        add( crashSprite = new Crash( player.x, player.y ) );
+        //restart();
         //player.kill();
         FlxG.log("crash");
     }
 
     private function win():Void {
-        restart();
+        state = STATE_WIN;
+        player.visible = false;
+        //restart();
         //player.kill();
         FlxG.log("win");
     }
@@ -250,7 +271,7 @@ class Board extends FlxGroup
         }
 
         if  ( !newTile.hasWay( entry ) ) {
-            crash();
+            crashSignaler.dispatch();
             return;
         }
 

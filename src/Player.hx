@@ -37,6 +37,9 @@ class Player extends FlxSprite
     override public function update():Void {
         super.update();
         
+        if ( !visible )
+            return;
+
         if ( t >= 0 ) {
             t += FlxG.elapsed * speed;
             //FlxG.log("t "+t+" curr "+currentTile);
