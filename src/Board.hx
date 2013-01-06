@@ -91,6 +91,8 @@ class Board extends FlxGroup
         player.currentTile = null;
         player.exit = TOP;
         findNextStep();
+
+        updateRound();
     }
 
     public function build():Void {
@@ -170,14 +172,18 @@ class Board extends FlxGroup
         return map[y][x];
     }
 
-    public function updateRound():Void {
+    public function updateRound( enableMovement:Bool = true ):Void {
+        player.updateRound( enableMovement );
+        dirt.x = player.x + Math.sin( player.angle / 180 * Math.PI + Math.PI )*16;
+        dirt.y = player.y - Math.cos( player.angle / 180 * Math.PI + Math.PI )*16;
+        dirt.setSize( 2, 2 ); 
+
+        if ( !enableMovement )
+            return;
         if ( player.pendingSwap() ) {
             findNextStep();
         }
         checkCoins();
-        dirt.x = player.x + Math.sin( player.angle / 180 * Math.PI + Math.PI )*16;
-        dirt.y = player.y - Math.cos( player.angle / 180 * Math.PI + Math.PI )*16;
-        dirt.setSize( 2, 2 ); 
     }
 
     private function checkCoins():Void {       
@@ -196,11 +202,15 @@ class Board extends FlxGroup
         for ( c in deadCoins )
             coins.remove( c );
 
-        if ( !castle.isOpen && coins.length == 0 )
+        if ( !castle.isOpen && coins.length == 0 ) {
+            FlxG.play("assets/sfx/door.mp3");
             castle.open();          
+        }
     }    
 
     public function setFocused( index:Int ):Void {
+        //FlxG.play("assets/sfx/moveFocus.mp3");
+        //FlxG.log("move focus");
         focused = (index + ROWS) % ROWS;
         updateFocus();
     }
@@ -209,6 +219,8 @@ class Board extends FlxGroup
         if ( focusLocked )
             return;
 
+        //FlxG.play("assets/sfx/moveRow.mp3");
+        //FlxG.log("move row");
         var row:Array<Tile> = map[ focused ];
         var t:Tile;
         

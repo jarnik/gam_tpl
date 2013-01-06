@@ -34,14 +34,13 @@ class Player extends FlxSprite
         offset.y = Board.TILE_SIZE/2;
 	}
 
-    override public function update():Void {
-        super.update();
-        
+    public function updateRound( enableMovement:Bool = false ):Void {
         if ( !visible )
             return;
 
         if ( t >= 0 ) {
-            t += FlxG.elapsed * speed;
+            if ( enableMovement )
+                t += FlxG.elapsed * speed;
             //FlxG.log("t "+t+" curr "+currentTile);
             updatePosition();
         }

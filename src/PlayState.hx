@@ -21,6 +21,7 @@ import com.eclecticdesignstudio.motion.easing.Elastic;
 
 enum PLAY_STATE {
     STATE_PLAY;
+    STATE_COUNTDOWN;
     STATE_WIN;
     STATE_FAIL;
 }
@@ -35,6 +36,7 @@ class PlayState extends FlxState
     private var screen:FlxSprite;
     private var bottomLine:FlxSprite;
     private var bottomText:FlxText;
+    private var countdown:CountDown;
 
 	override public function create():Void
 	{
@@ -61,6 +63,9 @@ class PlayState extends FlxState
         board.switchStateSignaler.bind( onSwitchedState );
         add( board );
 
+        add( countdown = new CountDown() );
+        countdown.countdownSignaler.bindVoid( onCountDown );
+
         add( screen = new FlxSprite( 80, 60 ) );
         screen.visible = false;
         screen.scale.x = 2;
@@ -73,17 +78,28 @@ class PlayState extends FlxState
         
         //state = STATE_PLAY;
         //onSwitchedState( STATE_FAIL );
-        onSwitchedState( STATE_PLAY );
+        //onSwitchedState( STATE_PLAY );
+        onSwitchedState( STATE_COUNTDOWN );
 	}
 
     override public function update():Void {
         switch ( state ) {
             case STATE_FAIL:
                 if ( FlxG.keys.justPressed( "SPACE" ) )
-                    onSwitchedState( STATE_PLAY );
+                    onSwitchedState( STATE_COUNTDOWN );
             case STATE_WIN:
                 if ( FlxG.keys.justPressed( "SPACE" ) )
-                    onSwitchedState( STATE_PLAY );
+                    onSwitchedState( STATE_COUNTDOWN );
+            case STATE_COUNTDOWN:
+                if ( FlxG.keys.justPressed( "UP" )  )
+                    board.setFocused( board.focused-1 );
+                if ( FlxG.keys.justPressed( "DOWN" )  )
+                    board.setFocused( board.focused+1 );
+                if ( FlxG.keys.justPressed( "LEFT" )  )
+                    board.moveRow( -1 );
+                if ( FlxG.keys.justPressed( "RIGHT" )  )
+                    board.moveRow( 1 );
+                board.updateRound( false );
             case STATE_PLAY:
                 if ( FlxG.keys.justPressed( "UP" )  )
                     board.setFocused( board.focused-1 );
@@ -102,6 +118,7 @@ class PlayState extends FlxState
     }
 
     private function onSwitchedState( newState:PLAY_STATE ):Void {
+        //FlxG.destroySounds();
         FlxG.keys.reset();
         state = newState;
         switch ( state ) {
@@ -109,15 +126,19 @@ class PlayState extends FlxState
                 FlxG.music.stop();
                 FlxG.shake( 0.01, 0.3 );
                 FlxG.play("assets/sfx/fail.mp3");
+                FlxG.play("assets/sfx/crash.mp3");
                 showScreen( "assets/screen_fail.png" );
             case STATE_WIN:
                 FlxG.music.stop();
+                FlxG.play("assets/sfx/win.mp3");
                 showScreen( "assets/screen_win.png" );
             case STATE_PLAY:
-                FlxG.playMusic( "assets/music/music.mp3" );
-                FlxG.play("assets/sfx/start.mp3");
-                hideScreen();
+            case STATE_COUNTDOWN:
                 board.restart();
+                FlxG.playMusic( "assets/music/music.mp3" );
+                //FlxG.play("assets/sfx/start.mp3");
+                hideScreen();
+                countdown.start();
             default:
         }
     }
@@ -137,4 +158,8 @@ class PlayState extends FlxState
         bottomText.visible = false;
     }
 	
+    private function onCountDown():Void {
+        onSwitchedState( STATE_PLAY );
+    }
+
 }
