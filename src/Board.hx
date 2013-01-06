@@ -5,6 +5,7 @@ import org.flixel.FlxGame;
 import org.flixel.FlxG;
 import org.flixel.FlxGroup;
 import org.flixel.FlxSprite;
+import org.flixel.FlxEmitter;
 import org.flixel.tweens.motion.LinearMotion;
 import org.flixel.tweens.util.Ease;
 import org.flixel.tweens.FlxTween;
@@ -40,6 +41,8 @@ class Board extends FlxGroup
     public var focused:Int;
     public var focusLocked:Bool;
 
+    private var dirt:FlxEmitter;
+
 	public function new():Void {
         super();
 
@@ -52,6 +55,11 @@ class Board extends FlxGroup
         focusLocked = false;
 
         add( player = new Player() );
+        add( dirt = new FlxEmitter() );
+        dirt.makeParticles( "assets/dirt.png", 20, 0, true, 0 );
+        dirt.setXSpeed( -8, 8 );
+        dirt.setYSpeed( -8, 8 );
+        dirt.setRotation( 0, 0 );
 
         switchStateSignaler = new DirectSignaler(this);
 
@@ -64,6 +72,7 @@ class Board extends FlxGroup
 
     public function restart():Void {
         player.visible = true;
+        dirt.start( false, 1.6, 0.2 );
 
         while ( tileLayer.length > 0 )
             tileLayer.remove( tileLayer.members[ 0 ], true );
@@ -160,6 +169,9 @@ class Board extends FlxGroup
             findNextStep();
         }
         checkCoins();
+        dirt.x = player.x + Math.sin( player.angle / 180 * Math.PI + Math.PI )*16;
+        dirt.y = player.y - Math.cos( player.angle / 180 * Math.PI + Math.PI )*16;
+        dirt.setSize( 2, 2 ); 
     }
 
     private function checkCoins():Void {       
@@ -222,11 +234,13 @@ class Board extends FlxGroup
             remove( crashSprite );
         add( crashSprite = new Crash( player.x, player.y ) );
         switchStateSignaler.dispatch( STATE_FAIL );
+        dirt.kill();
         FlxG.log("crash");
     }
 
     private function win():Void {
         player.visible = false;
+        dirt.kill();
         switchStateSignaler.dispatch( STATE_WIN );
         FlxG.log("win");
     }

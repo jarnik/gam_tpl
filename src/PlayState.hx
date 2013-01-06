@@ -33,6 +33,8 @@ class PlayState extends FlxState
     private var state:PLAY_STATE;
     private var board:Board;
     private var screen:FlxSprite;
+    private var bottomLine:FlxSprite;
+    private var bottomText:FlxText;
 
 	override public function create():Void
 	{
@@ -61,10 +63,15 @@ class PlayState extends FlxState
         screen.visible = false;
         screen.scale.x = 2;
         screen.scale.y = 2;
+
+        add( bottomLine = new FlxSprite( 0, FlxG.height - 32 ) );
+        bottomLine.makeGraphic( FlxG.width, 32, 0xFF000000 );
+        add( bottomText = new FlxText( 0, FlxG.height - 28, FlxG.width, "PRESS THY SPACE" ) );
+        bottomText.setFormat( null, 16, 0xf0f0f0, "center" );
         
         //state = STATE_PLAY;
-        //onSwitchedState( STATE_FAIL );
-        onSwitchedState( STATE_PLAY );
+        onSwitchedState( STATE_FAIL );
+        //onSwitchedState( STATE_PLAY );
 	}
 
     override public function update():Void {
@@ -97,6 +104,7 @@ class PlayState extends FlxState
         state = newState;
         switch ( state ) {
             case STATE_FAIL:
+                FlxG.shake( 0.01, 0.3 );
                 showScreen( "assets/screen_fail.png" );
             case STATE_WIN:
                 showScreen( "assets/screen_win.png" );
@@ -111,11 +119,15 @@ class PlayState extends FlxState
         screen.loadGraphic( url );
         screen.y = 300;
         screen.visible = true;
-        Actuate.tween( screen, 1, { y:60 } ).ease( Elastic.easeOut );
+        Actuate.tween( screen, 0.8, { y:45 } ).ease( Elastic.easeOut );
+        bottomLine.visible = true;
+        bottomText.visible = true;
     }
 
     private function hideScreen():Void {
         Actuate.tween( screen, 0.2, { y:300 } ).ease( Elastic.easeIn );
+        bottomLine.visible = false;
+        bottomText.visible = false;
     }
 	
 }
