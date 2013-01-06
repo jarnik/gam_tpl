@@ -40,6 +40,8 @@ class MenuState extends FlxState
 
         FlxG.playMusic( "assets/music/music.mp3" );
 
+        GAM.track("MenuState");
+
 	}
 	
 	override public function destroy():Void

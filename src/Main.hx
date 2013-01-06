@@ -34,7 +34,7 @@ class Main extends Sprite
 		
 		initialize();
 		
-		var demo:GAM = new GAM( "gam-tpl" );
+		var demo:GAM = new GAM( "gam-01" );
 		addChild(demo);
 
         // tracker test

@@ -16,6 +16,7 @@ class GAM extends FlxGame
     private var session:Session;
     private var visitor:Visitor;
     private var appID:String;
+    private static var instance:GAM;
 
 	public function new( appID:String )
 	{
@@ -27,6 +28,8 @@ class GAM extends FlxGame
 		super(Math.floor(stageWidth / ratio), Math.floor(stageHeight / ratio), MenuState, ratio, 30, 30);
 		//super(Math.floor(stageWidth / ratio), Math.floor(stageHeight / ratio), PlayState, ratio, 30, 30);
 		forceDebugger = true;
+
+        instance = this;
 
         this.appID = appID;
         initTracker();
@@ -45,7 +48,7 @@ class GAM extends FlxGame
         session = new googleAnalytics.Session();
     }
 
-    public function track( action:String ):Void {
+    public function _track( action:String ):Void {
         var e:googleAnalytics.Event = new googleAnalytics.Event( 
             'gam',  
             action,
@@ -53,6 +56,10 @@ class GAM extends FlxGame
         );
         tracker.trackEvent( e, session, visitor );
         FlxG.log("tracked "+appID+":"+action);
+    }
+
+    public static function track( action:String ):Void {
+        instance._track( action );
     }
 
 }

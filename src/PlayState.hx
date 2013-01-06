@@ -118,6 +118,7 @@ class PlayState extends FlxState
     }
 
     private function onSwitchedState( newState:PLAY_STATE ):Void {
+        GAM.track("PlayState-"+newState);
         //FlxG.destroySounds();
         FlxG.keys.reset();
         state = newState;
