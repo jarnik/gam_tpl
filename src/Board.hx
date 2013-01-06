@@ -25,6 +25,9 @@ class Board extends FlxGroup
     public var crashSignaler(default, null):Signaler<Void>;
     public var switchStateSignaler(default, null):Signaler<PLAY_STATE>;
 
+    public static var OFFSET_X:Float;
+    public static var OFFSET_Y:Float;
+
     public static inline var ROWS:Int = 7;
     public static inline var COLUMNS:Int = 7;
     public static inline var TILE_SIZE:Float = 32;
@@ -45,6 +48,9 @@ class Board extends FlxGroup
 
 	public function new():Void {
         super();
+
+        OFFSET_X = (FlxG.width - TILE_SIZE*COLUMNS) / 2;
+        OFFSET_Y = (FlxG.height - TILE_SIZE*ROWS) / 2;
 
         add( tileLayer = new FlxGroup() );
         add( coinLayer = new FlxGroup() );
@@ -220,8 +226,9 @@ class Board extends FlxGroup
     
     private function updateFocus():Void {
         focusLocked = true;
+        focus.x = OFFSET_X;
         Actuate.stop( focus );
-        Actuate.tween( focus, 0.05, { y: TILE_SIZE*focused } ).ease( Linear.easeNone ).onComplete( unlockFocus );
+        Actuate.tween( focus, 0.05, { y: TILE_SIZE*focused + OFFSET_Y } ).ease( Linear.easeNone ).onComplete( unlockFocus );
     }
 
     private function unlockFocus():Void {

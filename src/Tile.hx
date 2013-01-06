@@ -103,8 +103,8 @@ class Tile extends NestedSprite, implements IGrid
     public function move( x:Int, y:Int, tween:Bool = false ):Void {
         gx = x;
         gy = y;
-        var tx:Float = Board.TILE_SIZE/2 + x*Board.TILE_SIZE;
-        var ty:Float = Board.TILE_SIZE/2 + y*Board.TILE_SIZE;
+        var tx:Float = Board.TILE_SIZE/2 + x*Board.TILE_SIZE + Board.OFFSET_X;
+        var ty:Float = Board.TILE_SIZE/2 + y*Board.TILE_SIZE + Board.OFFSET_Y;
         if ( tween ) {
             Actuate.stop( this );
             Actuate.tween( this, 0.05, { x: tx, y: ty } ).ease( Linear.easeNone );
