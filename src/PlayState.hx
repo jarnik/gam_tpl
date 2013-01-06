@@ -76,6 +76,8 @@ class PlayState extends FlxState
         add( bottomText = new FlxText( 0, FlxG.height - 28, FlxG.width, "PRESS THY SPACE" ) );
         bottomText.setFormat( null, 16, 0xf0f0f0, "center" );
         
+        Levels.config = Levels.levels[ 0 ];
+
         //state = STATE_PLAY;
         //onSwitchedState( STATE_FAIL );
         //onSwitchedState( STATE_PLAY );

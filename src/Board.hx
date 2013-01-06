@@ -78,6 +78,8 @@ class Board extends FlxGroup
 
     public function restart():Void {
         player.visible = true;
+        player.speed = Levels.config.speed;
+
         dirt.start( false, 1.6, 0.2 );
 
         while ( tileLayer.length > 0 )
@@ -143,7 +145,7 @@ class Board extends FlxGroup
         emptyTiles.remove( endTile ); 
         endTile.addWay( BOTTOM );
 
-        var coinCount:Int = 3;
+        var coinCount:Int = Levels.config.coins;
         var c:Coin;
         var randIndex:Int;
         coins = [];
@@ -154,6 +156,8 @@ class Board extends FlxGroup
             emptyTiles.remove( emptyTiles[ randIndex ] );
             coins.push( c );
         }
+        if ( coinCount == 0 )
+            castle.open( false );
 
         for ( y in 0...ROWS )
             for ( x in 0...COLUMNS ) 
@@ -203,7 +207,6 @@ class Board extends FlxGroup
             coins.remove( c );
 
         if ( !castle.isOpen && coins.length == 0 ) {
-            FlxG.play("assets/sfx/door.mp3");
             castle.open();          
         }
     }    

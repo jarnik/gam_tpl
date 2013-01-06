@@ -32,7 +32,9 @@ class Castle extends FlxSprite
         y = parent.y;
     }
 
-    public function open():Void {
+    public function open( makeSound:Bool = true ):Void {
+        if ( makeSound )
+            FlxG.play("assets/sfx/door.mp3");
         frame = 1;
         isOpen = true;
     }
