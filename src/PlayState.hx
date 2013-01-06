@@ -72,8 +72,8 @@ class PlayState extends FlxState
         bottomText.setFormat( null, 16, 0xf0f0f0, "center" );
         
         //state = STATE_PLAY;
-        onSwitchedState( STATE_FAIL );
-        //onSwitchedState( STATE_PLAY );
+        //onSwitchedState( STATE_FAIL );
+        onSwitchedState( STATE_PLAY );
 	}
 
     override public function update():Void {
@@ -106,11 +106,16 @@ class PlayState extends FlxState
         state = newState;
         switch ( state ) {
             case STATE_FAIL:
+                FlxG.music.stop();
                 FlxG.shake( 0.01, 0.3 );
+                FlxG.play("assets/sfx/fail.mp3");
                 showScreen( "assets/screen_fail.png" );
             case STATE_WIN:
+                FlxG.music.stop();
                 showScreen( "assets/screen_win.png" );
             case STATE_PLAY:
+                FlxG.playMusic( "assets/music/music.mp3" );
+                FlxG.play("assets/sfx/start.mp3");
                 hideScreen();
                 board.restart();
             default:

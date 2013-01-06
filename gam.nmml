@@ -49,6 +49,9 @@
 	<assets path="assets/data/vis" include="*.png" type="image" />
 	<assets path="assets/layouts" include="*.xcf" type="binary" />
 	<assets path="assets/layouts" include="*.svg" type="binary" />
+
+	<assets path="assets/sfx" include="*.mp3" type="sound" />
+	<assets path="assets/music" include="*.mp3" type="music" />    
 	
 	<icon name="assets/HaxeFlixel.svg" />
 	

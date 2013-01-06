@@ -29,6 +29,7 @@ class Coin extends FlxSprite
     }
 
     public function pickup():Void {
+        FlxG.play("assets/sfx/coin.mp3");
         kill();
     }
 
