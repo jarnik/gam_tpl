@@ -54,6 +54,8 @@ class PlayState extends FlxState
         for ( i in 0...10 )
             FlxG.log("number "+(Generator.random()*100));
         */
+
+		FlxG.mouse.hide();
         
         board = new Board();
         board.switchStateSignaler.bind( onSwitchedState );

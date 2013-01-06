@@ -13,7 +13,10 @@ import org.flixel.FlxText;
 import org.flixel.FlxU;
 
 class MenuState extends FlxState
-{
+{    
+    private var bottomLine:FlxSprite;
+    private var bottomText:FlxText;
+
 	override public function create():Void
 	{
 		#if !neko
@@ -28,6 +31,13 @@ class MenuState extends FlxState
         bgr.scale.y = 2;
         add( bgr );
 
+        add( new FlxButton(210,130,"COMMENCE", onStartClicked) );
+
+        add( bottomLine = new FlxSprite( 0, FlxG.height - 16 ) );
+        bottomLine.makeGraphic( FlxG.width, 32, 0xFF000000 );
+        add( bottomText = new FlxText( 0, FlxG.height - 15, FlxG.width, " #OneGameAMonth entry #1 by @Jarnik, Jan 2013" ) );
+        bottomText.setFormat( null, 8, 0x808080, "left" );
+
 	}
 	
 	override public function destroy():Void
@@ -35,11 +45,15 @@ class MenuState extends FlxState
 		super.destroy();
 	}
 
+    private function onStartClicked():Void {
+        FlxG.switchState( new PlayState() );
+    }
+
 	override public function update():Void
 	{
 		super.update();
         if ( FlxG.keys.justPressed( "SPACE" ) ) {
-            FlxG.switchState( new PlayState() );
+            onStartClicked();
         }
 
 	}	
