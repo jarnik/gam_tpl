@@ -50,11 +50,15 @@ class GAM extends FlxGame
 
     public function _track( action:String ):Void {
         var e:googleAnalytics.Event = new googleAnalytics.Event( 
-            'gam',  
             action,
             appID
         );
         tracker.trackEvent( e, session, visitor );
+        /*
+        var page = new googleAnalytics.Page("/gam");
+        page.setTitle(action);
+        tracker.trackPageview(page, session, visitor);        
+        */
         FlxG.log("tracked "+appID+":"+action);
     }
 
