@@ -23,7 +23,11 @@ class MenuState extends FlxState
 		#end		
 		FlxG.mouse.show();
 
-        FlxG.switchState( new PlayState() );
+        var bgr:FlxSprite = new FlxSprite( 80,60,"assets/screen_start.png" );
+        bgr.scale.x = 2;
+        bgr.scale.y = 2;
+        add( bgr );
+
 	}
 	
 	override public function destroy():Void
@@ -34,5 +38,9 @@ class MenuState extends FlxState
 	override public function update():Void
 	{
 		super.update();
+        if ( FlxG.keys.justPressed( "SPACE" ) ) {
+            FlxG.switchState( new PlayState() );
+        }
+
 	}	
 }

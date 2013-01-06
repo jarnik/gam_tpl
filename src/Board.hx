@@ -16,23 +16,17 @@ import com.eclecticdesignstudio.motion.Actuate;
 import com.eclecticdesignstudio.motion.easing.Linear;
 
 import Tile;
-
-enum PLAY_STATE {
-    STATE_PLAY;
-    STATE_WIN;
-    STATE_FAIL;
-}
+import PlayState;
 	
 class Board extends FlxGroup
 {	
     // signals
     public var crashSignaler(default, null):Signaler<Void>;
+    public var switchStateSignaler(default, null):Signaler<PLAY_STATE>;
 
     public static inline var ROWS:Int = 7;
     public static inline var COLUMNS:Int = 7;
     public static inline var TILE_SIZE:Float = 32;
-
-    private var state:PLAY_STATE;
 
     public var player:Player;
     public var crashSprite:Crash;
@@ -59,18 +53,16 @@ class Board extends FlxGroup
 
         add( player = new Player() );
 
+        switchStateSignaler = new DirectSignaler(this);
+
         crashSignaler = new DirectSignaler(this);
         crashSignaler.bindVoid( crash );
         player.crashSignaler.bindVoid( crash );
 
-        restart();
-
-        
         updateFocus();
 	}
 
-    private function restart():Void {
-        state = STATE_PLAY;
+    public function restart():Void {
         player.visible = true;
 
         while ( tileLayer.length > 0 )
@@ -111,7 +103,9 @@ class Board extends FlxGroup
                         t.removeWay( TOP );
                     w = Math.random() > 0.5 ? LEFT: RIGHT;
                     t.addWay( w );
+                    emptyTiles.remove( t );
                     t = getTile( t.gx + ( w == LEFT ? -1 : 1 ), t.gy );
+                    emptyTiles.remove( t );
                     if ( t != null ) {
                         if ( Math.random() > 0.5 )
                             t.removeWay( BOTTOM );
@@ -161,14 +155,11 @@ class Board extends FlxGroup
         return map[y][x];
     }
 
-    public override function update():Void {
-        if ( state == STATE_PLAY ) {
-            if ( player.pendingSwap() ) {
-                findNextStep();
-            }
-            checkCoins();
+    public function updateRound():Void {
+        if ( player.pendingSwap() ) {
+            findNextStep();
         }
-        super.update();
+        checkCoins();
     }
 
     private function checkCoins():Void {       
@@ -226,17 +217,17 @@ class Board extends FlxGroup
     }
 
     private function crash():Void {
-        state = STATE_FAIL;
         player.visible = false;
         if ( crashSprite != null )
             remove( crashSprite );
         add( crashSprite = new Crash( player.x, player.y ) );
+        switchStateSignaler.dispatch( STATE_FAIL );
         FlxG.log("crash");
     }
 
     private function win():Void {
-        state = STATE_WIN;
         player.visible = false;
+        switchStateSignaler.dispatch( STATE_WIN );
         FlxG.log("win");
     }
 
