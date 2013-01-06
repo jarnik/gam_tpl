@@ -4,7 +4,12 @@ import nme.Lib;
 import org.flixel.FlxGame;
 import org.flixel.FlxG;
 import org.flixel.FlxSprite;
-	
+import org.flixel.FlxPoint;
+import addons.NestedSprite;
+
+import com.eclecticdesignstudio.motion.Actuate;    
+import com.eclecticdesignstudio.motion.easing.Linear;
+
 enum WAY {
     TOP;
     RIGHT;
@@ -20,15 +25,14 @@ typedef WAY_CONFIG = {
     left: Bool
 }
 
-class Tile extends FlxSprite, implements IGrid
+class Tile extends NestedSprite, implements IGrid
 {	
   
     public var gx:Int;
     public var gy:Int;
     public var wayConfig:Array<WAY>;
 
-    private var ways:Array<FlxSprite>;
-    private var tileFrame:FlxSprite;
+    private var tileFrame:NestedSprite;
 
 	public function new():Void {
         super( 0, 0, "assets/tile_grass.png" );
@@ -39,17 +43,15 @@ class Tile extends FlxSprite, implements IGrid
 	}
 
     public function updateWays():Void {
-        ways = [];
-        var w:FlxSprite;
+        var w:NestedSprite;
         for ( i in 0...wayConfig.length ) {
-            w = new FlxSprite( x, y );
+            w = new NestedSprite( x, y );
             w.loadRotatedGraphic( "assets/tile_B.png", 4 );
-            w.offset = offset;
-            ways.push( w );
-            w.angle = getWayAngle( wayConfig[ i ] ) / Math.PI * 180 + 180;
+            w.relativeAngle = getWayAngle( wayConfig[ i ] ) / Math.PI * 180 + 180;
             w.preUpdate();
             w.update();
             w.postUpdate();
+            add( w );
         }
 
         if ( hasWay( TOP ) && hasWay( RIGHT ) )
@@ -65,9 +67,9 @@ class Tile extends FlxSprite, implements IGrid
         if ( hasWay( LEFT ) && hasWay( RIGHT ) )
             addCentralPiece( false, 90 );
 
-        tileFrame = new FlxSprite( 0, 0, "assets/tile_frame.png" );
-        tileFrame.offset = offset;
+        tileFrame = new NestedSprite( 0, 0, "assets/tile_frame.png" );
         tileFrame.alpha = 0.5;
+        add( tileFrame );
         move( gx, gy );
     }
 
@@ -79,15 +81,14 @@ class Tile extends FlxSprite, implements IGrid
     }
 
     private function addCentralPiece( isCurve:Bool, a:Float ):Void {
-        var w:FlxSprite;
-        w = new FlxSprite( x, y );
+        var w:NestedSprite;
+        w = new NestedSprite( x, y );
         w.loadRotatedGraphic( "assets/tile_"+(isCurve ? "curve_BR":"straight_TB" )+".png", 4 );
-        w.offset = offset;
-        w.angle = a;
+        w.relativeAngle = a;
         w.preUpdate();
         w.update();
         w.postUpdate();
-        ways.push( w );
+        add( w );
     }
 
     public function addWay( w:WAY ):Void {
@@ -99,33 +100,18 @@ class Tile extends FlxSprite, implements IGrid
         wayConfig.remove( w );
     }
 
-    public function move( x:Int, y:Int ):Void {
+    public function move( x:Int, y:Int, tween:Bool = false ):Void {
         gx = x;
         gy = y;
-        this.x = Board.TILE_SIZE/2 + x*Board.TILE_SIZE;
-        this.y = Board.TILE_SIZE/2 + y*Board.TILE_SIZE;
-
-        if ( ways != null ) {
-            for ( w in ways ) {
-                w.x = this.x;
-                w.y = this.y;
-            }
-            tileFrame.x = this.x;
-            tileFrame.y = this.y;
+        var tx:Float = Board.TILE_SIZE/2 + x*Board.TILE_SIZE;
+        var ty:Float = Board.TILE_SIZE/2 + y*Board.TILE_SIZE;
+        if ( tween ) {
+            Actuate.stop( this );
+            Actuate.tween( this, 0.05, { x: tx, y: ty } ).ease( Linear.easeNone );
+        } else {
+            this.x = tx;
+            this.y = ty;
         }
-    }
-
-    override public function update():Void {
-        super.update();
-    }
-
-    override public function draw():Void {
-        super.draw();
-        for ( w in ways ) {
-            w.draw();
-        }
-        tileFrame.draw();
-
     }
 
     public static function getEntryWay( a:Tile, b:Tile ):WAY {

@@ -12,6 +12,9 @@ import org.flixel.tweens.FlxTween;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
+import com.eclecticdesignstudio.motion.Actuate;
+import com.eclecticdesignstudio.motion.easing.Linear;
+
 import Tile;
 
 enum PLAY_STATE {
@@ -41,6 +44,7 @@ class Board extends FlxGroup
 
     private var focus:FlxSprite;
     public var focused:Int;
+    public var focusLocked:Bool;
 
 	public function new():Void {
         super();
@@ -51,6 +55,7 @@ class Board extends FlxGroup
         add( focus = new FlxSprite() );
         focus.makeGraphic( COLUMNS*TILE_SIZE, TILE_SIZE, 0x80800080 );
         focused = 4;
+        focusLocked = false;
 
         add( player = new Player() );
 
@@ -60,6 +65,7 @@ class Board extends FlxGroup
 
         restart();
 
+        
         updateFocus();
 	}
 
@@ -191,6 +197,9 @@ class Board extends FlxGroup
     }
 
     public function moveRow( step:Int ):Void {
+        if ( focusLocked )
+            return;
+
         var row:Array<Tile> = map[ focused ];
         var t:Tile;
         
@@ -202,16 +211,18 @@ class Board extends FlxGroup
             row.push( t );
         }
         for ( i in 0...row.length ) {
-            row[ i ].move( i, focused );
+            row[ i ].move( i, focused, true );
         }
     }
     
     private function updateFocus():Void {
-        /*var mt:LinearMotion = new LinearMotion( FlxTween.ONESHOT );
-        mt.setMotion( 0, focus.y, 0, TILE_SIZE*focused, 1, Ease.quadIn );
-        focus.addTween( mt, true );
-        */
-        focus.y = TILE_SIZE*focused;
+        focusLocked = true;
+        Actuate.stop( focus );
+        Actuate.tween( focus, 0.05, { y: TILE_SIZE*focused } ).ease( Linear.easeNone ).onComplete( unlockFocus );
+    }
+
+    private function unlockFocus():Void {
+        focusLocked = false;
     }
 
     private function crash():Void {
@@ -220,16 +231,12 @@ class Board extends FlxGroup
         if ( crashSprite != null )
             remove( crashSprite );
         add( crashSprite = new Crash( player.x, player.y ) );
-        //restart();
-        //player.kill();
         FlxG.log("crash");
     }
 
     private function win():Void {
         state = STATE_WIN;
         player.visible = false;
-        //restart();
-        //player.kill();
         FlxG.log("win");
     }
 
