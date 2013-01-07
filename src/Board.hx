@@ -38,7 +38,8 @@ class Board extends FlxGroup
     public var coinLayer:FlxGroup;
     public var map:Array<Array<Tile>>;
     private var coins:Array<Coin>;
-    private var castle:Castle;
+    public var castle:Castle;
+    private var movables:Array<Movable>;
 
     private var focus:FlxSprite;
     public var focused:Int;
@@ -72,6 +73,7 @@ class Board extends FlxGroup
         crashSignaler = new DirectSignaler(this);
         crashSignaler.bindVoid( crash );
         player.crashSignaler.bindVoid( crash );
+        player.winSignaler.bindVoid( win );
 
         updateFocus();
 	}
@@ -92,7 +94,7 @@ class Board extends FlxGroup
         
         player.currentTile = null;
         player.exit = TOP;
-        findNextStep();
+        player.findNextStep( this );
 
         updateRound();
     }
@@ -145,6 +147,9 @@ class Board extends FlxGroup
         emptyTiles.remove( endTile ); 
         endTile.addWay( BOTTOM );
 
+        movables = [];
+        movables.push( player );
+
         var coinCount:Int = Levels.config.coins;
         var c:Coin;
         var randIndex:Int;
@@ -177,16 +182,19 @@ class Board extends FlxGroup
     }
 
     public function updateRound( enableMovement:Bool = true ):Void {
-        player.updateRound( enableMovement );
+        for ( m in movables ) {  
+            m.updateRound( enableMovement );
+            if ( enableMovement && m.pendingSwap() ) {
+                m.findNextStep( this );
+            }
+        }
+
         dirt.x = player.x + Math.sin( player.angle / 180 * Math.PI + Math.PI )*16;
         dirt.y = player.y - Math.cos( player.angle / 180 * Math.PI + Math.PI )*16;
         dirt.setSize( 2, 2 ); 
 
         if ( !enableMovement )
             return;
-        if ( player.pendingSwap() ) {
-            findNextStep();
-        }
         checkCoins();
     }
 
@@ -265,62 +273,6 @@ class Board extends FlxGroup
         dirt.kill();
         switchStateSignaler.dispatch( STATE_WIN );
         FlxG.log("win");
-    }
-
-
-    private function findNextStep():Void {
-        var newTile:Tile;
-        var entry:WAY;
-        var exit:WAY;
-
-        var newTileAngle:Float = Tile.getWayAngle( player.exit );
-        var dx:Int = Math.round( Math.sin( newTileAngle ) );
-        var dy:Int = Math.round( -Math.cos( newTileAngle ) );
-        if ( player.currentTile == null ) {
-            dx = Math.floor(COLUMNS / 2); 
-            dy = ROWS-1; 
-        } else {
-            dx += player.currentTile.gx; 
-            dy += player.currentTile.gy; 
-            dx = (dx + COLUMNS) % COLUMNS;
-            dy = (dy + ROWS) % ROWS;
-        }
-
-        newTile = getTile( dx, dy );
-        if ( newTile == null ) {
-            crashSignaler.dispatch();
-            return;
-        }
-
-        entry = Tile.invertWay( player.exit );
-
-        if ( newTile == castle.parent ) {
-            if ( entry == BOTTOM && castle.isOpen ) {
-                win();
-                return;
-            } else {
-                crashSignaler.dispatch();
-                return;
-            }
-        }
-
-        if  ( !newTile.hasWay( entry ) ) {
-            crashSignaler.dispatch();
-            return;
-        }
-
-        var openWays:Array<WAY> = [];
-        for ( w in newTile.wayConfig ) {
-            if ( w == entry )
-                continue;
-            openWays.push( w );
-        }
-        if ( openWays.length == 0 )
-            exit = NOWAY;
-        else
-            exit = openWays[ Math.floor( Math.random() * openWays.length ) ];
-
-        player.enterNewTile( newTile, entry, exit );
     }
 
 }
