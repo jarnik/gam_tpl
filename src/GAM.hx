@@ -16,6 +16,7 @@ class GAM extends FlxGame
     private var session:Session;
     private var visitor:Visitor;
     private var appID:String;
+    private var startTime:Float;
     private static var instance:GAM;
 
 	public function new( appID:String )
@@ -30,6 +31,7 @@ class GAM extends FlxGame
 		forceDebugger = true;
 
         instance = this;
+        startTime = Date.now().getTime();
 
         this.appID = appID;
         initTracker();
@@ -48,22 +50,27 @@ class GAM extends FlxGame
         session = new googleAnalytics.Session();
     }
 
-    public function _track( action:String ):Void {
+    public function _track( state:String, action:String ):Void {
+        var time:Int = Math.round( Date.now().getTime() - startTime );
         var e:googleAnalytics.Event = new googleAnalytics.Event( 
+            appID,
+            state,
             action,
-            appID
+            time,
+            true
         );
         tracker.trackEvent( e, session, visitor );
-        /*
-        var page = new googleAnalytics.Page("/gam");
-        page.setTitle(action);
-        tracker.trackPageview(page, session, visitor);        
-        */
-        FlxG.log("tracked "+appID+":"+action);
+        FlxG.log("tracked "+appID+":"+state+":"+action);
+
+        // haxe-ga HACK
+        // /usr/lib/haxe/lib/haxe-ga/0,2/googleAnalytics/internals/request/
+        // X10 serialization puts in weird "0!", confusing GA
+        // I am serializing it by hand using:
+        // p.utme = "5("+this.event.getCategory()+"*"+this.event.getAction()+"*"+this.event.getLabel()+")("+this.event.getValue()+")";
     }
 
-    public static function track( action:String ):Void {
-        instance._track( action );
+    public static function track( state:String, action:String = "" ):Void {
+        instance._track( state, action );
     }
 
 }
