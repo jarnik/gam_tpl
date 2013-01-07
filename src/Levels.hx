@@ -28,7 +28,7 @@ class Levels
     public static var config:Level;
 
     public static inline var levels:Array<Level> = [
-        { tile: "tile_grass.png", coins: 3, speed:0.8, blocks: 0, enemies: [] },
+        { tile: "tile_stones.png", coins: 3, speed:0.8, blocks: 0, enemies: [] },
         { tile: "tile_grass.png", coins: 0, speed:0.6, blocks: 0, enemies: [] }
     ];
 

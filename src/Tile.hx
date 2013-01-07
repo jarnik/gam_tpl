@@ -34,8 +34,8 @@ class Tile extends NestedSprite, implements IGrid
 
     private var tileFrame:NestedSprite;
 
-	public function new():Void {
-        super( 0, 0, "assets/tile_grass.png" );
+	public function new( tile:String ):Void {
+        super( 0, 0, "assets/"+tile );
         offset.x = 16;
         offset.y = 16;
 

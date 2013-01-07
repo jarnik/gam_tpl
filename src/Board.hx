@@ -107,7 +107,7 @@ class Board extends FlxGroup
         for ( y in 0...ROWS ) {
             row = [];
             for ( x in 0...COLUMNS ) {
-                t = new Tile();
+                t = new Tile( Levels.config.tile );
                 t.wayConfig = [ TOP, BOTTOM ];
                 addTile( x, y, t );
                 row.push( t );
