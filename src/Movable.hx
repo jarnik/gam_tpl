@@ -4,6 +4,7 @@ import nme.Lib;
 import org.flixel.FlxGame;
 import org.flixel.FlxG;
 import org.flixel.FlxSprite;
+import org.flixel.FlxObject;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
@@ -22,7 +23,7 @@ class Movable extends FlxSprite
 
     public var speed:Float;
 
-	public function new( x:Float, y:Float, Graphic:Dynamic ):Void {
+	public function new( x:Float = 0, y:Float = 0, Graphic:Dynamic = null ):Void {
         super( x, y, Graphic );
         crashSignaler = new DirectSignaler(this);
         speed = 0.8;
@@ -46,18 +47,19 @@ class Movable extends FlxSprite
                 t = -1;
                 crashSignaler.dispatch();
             }
-
             angle = Tile.getWayAngle( exit );
             faceAngle = angle;
         } else
             return;
 
         if ( currentTile != null ) {
-            //FlxG.log(" entry "+entry+" exit "+exit+" t "+t+" d "+d+" angle "+angle);
+            setOrientation( faceAngle );
             x = currentTile.x + Math.sin( angle ) * d;
             y = currentTile.y - Math.cos( angle ) * d;
-            this.angle = faceAngle/Math.PI*180;
         }
+    }
+
+    private function setOrientation( a:Float ):Void {
     }
 
     public function enterNewTile( tile:Tile, entry:WAY, exit:WAY ):Void {
@@ -65,6 +67,8 @@ class Movable extends FlxSprite
         this.entry = entry;
         this.exit = exit;
         t = 0;
+        if ( speed == 0 )
+            t = 0.5;
     }
 
     public function updateRound( enableMovement:Bool = false ):Void {
@@ -105,12 +109,11 @@ class Movable extends FlxSprite
 
         entry = Tile.invertWay( exit );
         exit = getNewExit( b, newTile, entry );
-        //FlxG.log("new way is "+entry+" "+exit);
 
         enterNewTile( newTile, entry, exit );
     }
 
-    public function getNewExit( b:Board, newTile:Tile, entry:WAY ):WAY {
+    private function getNewExit( b:Board, newTile:Tile, entry:WAY ):WAY {
         return Tile.invertWay( entry );
     }
 

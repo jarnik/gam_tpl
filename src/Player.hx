@@ -13,12 +13,14 @@ import Tile;
 class Player extends Movable 
 {	
     public var winSignaler(default, null):Signaler<Void>;
+    public static var instance:Player;
 
 	public function new():Void {
         super( 0, 0, "assets/player.png" );
         winSignaler = new DirectSignaler(this);
         offset.x = Board.TILE_SIZE/2;
         offset.y = Board.TILE_SIZE/2;
+        instance = this;
 	}
 
     override public function getNewExit( b:Board, newTile:Tile, entry:WAY ):WAY {
@@ -51,4 +53,7 @@ class Player extends Movable
         return newExit;
     }
 
+    override private function setOrientation( a:Float ):Void {
+        this.angle = a/Math.PI*180;
+    }
 }

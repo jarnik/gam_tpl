@@ -5,6 +5,7 @@ import org.flixel.FlxGame;
 import org.flixel.FlxG;
 import org.flixel.FlxGroup;
 import org.flixel.FlxSprite;
+import org.flixel.FlxObject;
 import org.flixel.FlxEmitter;
 import org.flixel.tweens.motion.LinearMotion;
 import org.flixel.tweens.util.Ease;
@@ -35,9 +36,9 @@ class Board extends FlxGroup
     public var player:Player;
     public var crashSprite:Crash;
     public var tileLayer:FlxGroup;
-    public var coinLayer:FlxGroup;
+    public var movableLayer:FlxGroup;
     public var map:Array<Array<Tile>>;
-    private var coins:Array<Coin>;
+    private var coinsRemaining:Int;
     public var castle:Castle;
     private var movables:Array<Movable>;
 
@@ -54,7 +55,7 @@ class Board extends FlxGroup
         OFFSET_Y = (FlxG.height - TILE_SIZE*ROWS) / 2;
 
         add( tileLayer = new FlxGroup() );
-        add( coinLayer = new FlxGroup() );
+        add( movableLayer = new FlxGroup() );
 
         add( focus = new FlxSprite() );
         focus.makeGraphic( COLUMNS*TILE_SIZE, TILE_SIZE, 0x80800080 );
@@ -86,8 +87,8 @@ class Board extends FlxGroup
 
         while ( tileLayer.length > 0 )
             tileLayer.remove( tileLayer.members[ 0 ], true );
-        while ( coinLayer.length > 0 )
-            coinLayer.remove( coinLayer.members[ 0 ], true );
+        while ( movableLayer.length > 0 )
+            movableLayer.remove( movableLayer.members[ 0 ], true );
 
         map = [];
         build();
@@ -143,7 +144,7 @@ class Board extends FlxGroup
 
         var endTile:Tile = getTile( Math.floor( COLUMNS / 2 ), 0 );
         castle = new Castle( endTile );
-        coinLayer.add( castle );
+        movableLayer.add( castle );
         emptyTiles.remove( endTile ); 
         endTile.addWay( BOTTOM );
 
@@ -151,18 +152,55 @@ class Board extends FlxGroup
         movables.push( player );
 
         var coinCount:Int = Levels.config.coins;
+        coinsRemaining = coinCount;
         var c:Coin;
         var randIndex:Int;
-        coins = [];
         for ( i in 0...coinCount ) {
             randIndex = Math.floor( Math.random()*emptyTiles.length );
             c = new Coin( emptyTiles[ randIndex ] );
-            coinLayer.add( c );
+            c.enterNewTile( emptyTiles[ randIndex ], LEFT, RIGHT );
+            movableLayer.add( c );
+            movables.push( c );
             emptyTiles.remove( emptyTiles[ randIndex ] );
-            coins.push( c );
         }
         if ( coinCount == 0 )
             castle.open( false );
+
+        var cowCount:Int = 0;
+        var cow:Cow;
+        var goRight:Bool;
+        for ( i in 0...cowCount ) {
+            randIndex = Math.floor( Math.random()*emptyTiles.length );
+            goRight = (Math.random() > 0.5);
+            cow = new Cow( goRight ? FlxObject.RIGHT : FlxObject.LEFT );
+            movableLayer.add( cow );
+            cow.enterNewTile( emptyTiles[ randIndex ], goRight ? LEFT : RIGHT, goRight ? RIGHT : LEFT );
+            emptyTiles.remove( emptyTiles[ randIndex ] );
+            movables.push( cow );
+        }
+
+        var henCount:Int = 1;
+        var hen:Hen;
+        for ( i in 0...henCount ) {
+            randIndex = Math.floor( Math.random()*emptyTiles.length );
+            goRight = (Math.random() > 0.5);
+            hen = new Hen( goRight ? FlxObject.RIGHT : FlxObject.LEFT );
+            movableLayer.add( hen );
+            hen.enterNewTile( emptyTiles[ randIndex ], goRight ? LEFT : RIGHT, goRight ? RIGHT : LEFT );
+            emptyTiles.remove( emptyTiles[ randIndex ] );
+            movables.push( hen );
+        }
+
+        var blockCount:Int = 3;
+        var block:Block;
+        for ( i in 0...blockCount ) {
+            randIndex = Math.floor( Math.random()*emptyTiles.length );
+            block = new Block();
+            movableLayer.add( block );
+            block.enterNewTile( emptyTiles[ randIndex ], RIGHT, LEFT );
+            emptyTiles.remove( emptyTiles[ randIndex ] );
+            movables.push( block );
+        }
 
         for ( y in 0...ROWS )
             for ( x in 0...COLUMNS ) 
@@ -195,33 +233,36 @@ class Board extends FlxGroup
 
         if ( !enableMovement )
             return;
-        checkCoins();
-    }
-
-    private function checkCoins():Void {       
-        var d:Float;
-        var deadCoins:Array<Coin> = [];
-        for ( c in coins ) {
-            if ( !c.alive )
+        var d:Float = 0;
+        for ( m in movables ) {
+            if ( m == player || !m.alive )
                 continue;
-
-            d = Math.sqrt( Math.pow( c.x-player.x, 2 ) + Math.pow( c.y-player.y, 2 ) );
-            if ( d < 3 ) {
-                c.pickup();
-                deadCoins.push( c );
+            d = Math.sqrt( Math.pow( m.x-player.x, 2 ) + Math.pow( m.y-player.y, 2 ) );
+            switch ( Type.getClass( m )) {
+                case Coin:
+                    if ( d < 3 ) {
+                        cast(m,Coin).pickup();
+                        coinsRemaining--;
+                    }
+                case Cow, Hen:
+                    if ( d < 5 ) {
+                        crashSignaler.dispatch();
+                        return;
+                    }
+                case Block:
+                    if ( d < 8 ) {
+                        crashSignaler.dispatch();
+                        return;
+                    }
+                default:
             }
         }
-        for ( c in deadCoins )
-            coins.remove( c );
 
-        if ( !castle.isOpen && coins.length == 0 ) {
+        if ( !castle.isOpen && coinsRemaining == 0 )
             castle.open();          
-        }
-    }    
+    }
 
     public function setFocused( index:Int ):Void {
-        //FlxG.play("assets/sfx/moveFocus.mp3");
-        //FlxG.log("move focus");
         focused = (index + ROWS) % ROWS;
         updateFocus();
     }
@@ -230,8 +271,6 @@ class Board extends FlxGroup
         if ( focusLocked )
             return;
 
-        //FlxG.play("assets/sfx/moveRow.mp3");
-        //FlxG.log("move row");
         var row:Array<Tile> = map[ focused ];
         var t:Tile;
         

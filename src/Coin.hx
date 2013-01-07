@@ -5,7 +5,7 @@ import org.flixel.FlxGame;
 import org.flixel.FlxG;
 import org.flixel.FlxSprite;
 
-class Coin extends FlxSprite
+class Coin extends Movable 
 {	
   
     private var parent:Tile;
@@ -15,18 +15,8 @@ class Coin extends FlxSprite
         super( 0, 0, "assets/coin.png" );
         offset.x = 8;
         offset.y = 12;
-        copyParent();
+        speed = 0;
 	}
-
-    override public function update():Void {
-        super.update();
-        copyParent();
-    }
-
-    private function copyParent():Void {
-        x = parent.x;
-        y = parent.y;
-    }
 
     public function pickup():Void {
         FlxG.play("assets/sfx/coin.mp3");
