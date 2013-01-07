@@ -48,6 +48,9 @@ class GAM extends FlxGame
         visitor.setScreenResolution( FlxG.width+'x'+FlxG.height);
         
         session = new googleAnalytics.Session();
+
+        GameLog.init( appID, 'http://www.jarnik.com/amfphp/gateway.php' );
+        GameLog.start();
     }
 
     public function _track( state:String, action:String ):Void {
@@ -60,7 +63,11 @@ class GAM extends FlxGame
             true
         );
         tracker.trackEvent( e, session, visitor );
+
+        GameLog.log( { state:state, action: action } );
+
         FlxG.log("tracked "+appID+":"+state+":"+action);
+
 
         // haxe-ga HACK
         // /usr/lib/haxe/lib/haxe-ga/0,2/googleAnalytics/internals/request/
