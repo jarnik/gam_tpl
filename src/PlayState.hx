@@ -57,6 +57,8 @@ class PlayState extends FlxState
             FlxG.log("number "+(Generator.random()*100));
         */
 
+        Levels.current = 0;
+
 		FlxG.mouse.hide();
         
         board = new Board();
@@ -85,6 +87,13 @@ class PlayState extends FlxState
 	}
 
     override public function update():Void {
+        if ( FlxG.keys.justPressed( "R" ) )
+            onSwitchedState( STATE_COUNTDOWN );
+        if ( FlxG.keys.justPressed( "N" ) ) {
+            Levels.current++;
+            onSwitchedState( STATE_COUNTDOWN );
+        }
+
         switch ( state ) {
             case STATE_FAIL:
                 if ( FlxG.keys.justPressed( "SPACE" ) )
@@ -135,8 +144,12 @@ class PlayState extends FlxState
                 FlxG.music.stop();
                 FlxG.play("assets/sfx/win.mp3");
                 showScreen( "assets/screen_win.png" );
+                Levels.current++;
+                Levels.current = Math.round(Math.min( Levels.current, Levels.levels.length-1 ));
             case STATE_PLAY:
             case STATE_COUNTDOWN:
+                Levels.config = Levels.levels[ Levels.current ];
+                FlxG.log("level "+Levels.current);
                 board.restart();
                 FlxG.playMusic( "assets/music/music.mp3" );
                 //FlxG.play("assets/sfx/start.mp3");
