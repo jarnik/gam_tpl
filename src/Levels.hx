@@ -19,7 +19,11 @@ typedef Level = {
     coins:Int,
     speed:Float,
     blocks:Int,
-    enemies:Array<ENEMY>
+    cows:Int,
+    hens:Int,
+    coinSpeed:Float,
+    crossP:Float,
+    swapP:Float
     //cityName:String,    
 }
 
@@ -28,8 +32,8 @@ class Levels
     public static var config:Level;
 
     public static inline var levels:Array<Level> = [
-        { tile: "tile_stones.png", coins: 3, speed:0.8, blocks: 0, enemies: [] },
-        { tile: "tile_grass.png", coins: 0, speed:0.6, blocks: 0, enemies: [] }
+        { tile: "tile_stones.png", coins: 3, speed:0.8, blocks: 0, cows: 0, hens: 0, coinSpeed: 0, crossP: 0.3 ,swapP: 0.3  },
+        { tile: "tile_stones.png", coins: 3, speed:0.8, blocks: 0, cows: 0, hens: 0, coinSpeed: 0, crossP: 0 ,swapP:0 }
     ];
 
 }

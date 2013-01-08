@@ -120,8 +120,8 @@ class Board extends FlxGroup
         for ( y in 0...ROWS ) {
             for ( x in 0...COLUMNS ) {
                 t = getTile( x, y );
-                if ( Math.random() < 0.3 ) {
-                    if ( Math.random() > 0.5 )
+                if ( Math.random() < Levels.config.swapP ) {
+                    if ( Math.random() > Levels.config.crossP )
                         t.removeWay( TOP );
                     w = Math.random() > 0.5 ? LEFT: RIGHT;
                     t.addWay( w );
@@ -129,7 +129,7 @@ class Board extends FlxGroup
                     t = getTile( t.gx + ( w == LEFT ? -1 : 1 ), t.gy );
                     emptyTiles.remove( t );
                     if ( t != null ) {
-                        if ( Math.random() > 0.5 )
+                        if ( Math.random() > Levels.config.crossP )
                             t.removeWay( BOTTOM );
                         t.addWay( Tile.invertWay( w ) );
                     }                    
@@ -155,10 +155,12 @@ class Board extends FlxGroup
         coinsRemaining = coinCount;
         var c:Coin;
         var randIndex:Int;
+        var goRight:Bool;
         for ( i in 0...coinCount ) {
             randIndex = Math.floor( Math.random()*emptyTiles.length );
-            c = new Coin( emptyTiles[ randIndex ] );
-            c.enterNewTile( emptyTiles[ randIndex ], LEFT, RIGHT );
+            goRight = (Math.random() > 0.5);
+            c = new Coin( emptyTiles[ randIndex ], Levels.config.coinSpeed );
+            c.enterNewTile( emptyTiles[ randIndex ], goRight ? LEFT : RIGHT, goRight ? RIGHT : LEFT );
             movableLayer.add( c );
             movables.push( c );
             emptyTiles.remove( emptyTiles[ randIndex ] );
@@ -166,9 +168,8 @@ class Board extends FlxGroup
         if ( coinCount == 0 )
             castle.open( false );
 
-        var cowCount:Int = 0;
+        var cowCount:Int = Levels.config.cows;
         var cow:Cow;
-        var goRight:Bool;
         for ( i in 0...cowCount ) {
             randIndex = Math.floor( Math.random()*emptyTiles.length );
             goRight = (Math.random() > 0.5);
@@ -179,7 +180,7 @@ class Board extends FlxGroup
             movables.push( cow );
         }
 
-        var henCount:Int = 1;
+        var henCount:Int = Levels.config.hens;
         var hen:Hen;
         for ( i in 0...henCount ) {
             randIndex = Math.floor( Math.random()*emptyTiles.length );
@@ -191,7 +192,7 @@ class Board extends FlxGroup
             movables.push( hen );
         }
 
-        var blockCount:Int = 3;
+        var blockCount:Int = Levels.config.blocks;
         var block:Block;
         for ( i in 0...blockCount ) {
             randIndex = Math.floor( Math.random()*emptyTiles.length );
@@ -240,7 +241,7 @@ class Board extends FlxGroup
             d = Math.sqrt( Math.pow( m.x-player.x, 2 ) + Math.pow( m.y-player.y, 2 ) );
             switch ( Type.getClass( m )) {
                 case Coin:
-                    if ( d < 3 ) {
+                    if ( d < 10 ) {
                         cast(m,Coin).pickup();
                         coinsRemaining--;
                     }
