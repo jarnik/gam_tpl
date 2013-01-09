@@ -23,16 +23,33 @@ class MenuState extends FlxState
 		#end		
 		FlxG.mouse.show();
 
-        FlxG.switchState( new PlayState() );
+        /*var bgr:FlxSprite = new FlxSprite( 80,60,"assets/screen_start.png" );
+        bgr.scale.x = 2;
+        bgr.scale.y = 2;
+        add( bgr );*/
+
+        add( new FlxButton(210,130,"COMMENCE", onStartClicked) );
+
+        var bottomLine:FlxSprite;
+        var bottomText:FlxText;
+        add( bottomLine = new FlxSprite( 0, FlxG.height - 16 ) );
+        bottomLine.makeGraphic( FlxG.width, 32, 0xFF000000 );
+        add( bottomText = new FlxText( 0, FlxG.height - 15, FlxG.width, " #OneGameAMonth entry #1 by @Jarnik, Jan 2013" ) );
+        bottomText.setFormat( null, 8, 0x808080, "left" );
+
+        GAM.track("MenuState");
+
 	}
-	
-	override public function destroy():Void
-	{
-		super.destroy();
-	}
+
+    private function onStartClicked():Void {
+        FlxG.switchState( new IntroState() );
+    }
 
 	override public function update():Void
 	{
 		super.update();
+        if ( FlxG.keys.justPressed( "SPACE" ) ) {
+            onStartClicked();
+        }
 	}	
 }

@@ -12,13 +12,16 @@ import org.flixel.FlxState;
 import org.flixel.FlxText;
 import org.flixel.FlxU;
 
-
 class EndState extends FlxState
-{
+{    
 
 	override public function create():Void
 	{
+		FlxG.mouse.hide();
+
+        
+        GAM.track("EndState");
 
 	}
-	
+		
 }
