@@ -143,7 +143,7 @@ class Board extends FlxGroup
         emptyTiles.remove( startTile ); 
 
         var endTile:Tile = getTile( Math.floor( COLUMNS / 2 ), 0 );
-        castle = new Castle( endTile );
+        castle = new Castle( endTile, Levels.config.citySkin );
         movableLayer.add( castle );
         emptyTiles.remove( endTile ); 
         endTile.addWay( BOTTOM );
