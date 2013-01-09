@@ -50,7 +50,7 @@ class MenuState extends FlxState
 	}
 
     private function onStartClicked():Void {
-        FlxG.switchState( new PlayState() );
+        FlxG.switchState( new IntroState() );
     }
 
 	override public function update():Void
