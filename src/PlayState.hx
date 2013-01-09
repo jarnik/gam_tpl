@@ -98,8 +98,8 @@ class PlayState extends FlxState
         if ( FlxG.keys.justPressed( "R" ) )
             onSwitchedState( STATE_COUNTDOWN );
         if ( FlxG.keys.justPressed( "N" ) ) {
-            Levels.current++;
-            onSwitchedState( STATE_COUNTDOWN );
+            nextLevel();
+            return;
         }
 
         switch ( state ) {
@@ -107,8 +107,9 @@ class PlayState extends FlxState
                 if ( FlxG.keys.justPressed( "SPACE" ) )
                     onSwitchedState( STATE_COUNTDOWN );
             case STATE_WIN:
-                if ( FlxG.keys.justPressed( "SPACE" ) )
-                    onSwitchedState( STATE_COUNTDOWN );
+                if ( FlxG.keys.justPressed( "SPACE" ) ) {
+                    nextLevel();
+                }
             case STATE_COUNTDOWN:
                 if ( FlxG.keys.justPressed( "UP" )  )
                     board.setFocused( board.focused-1 );
@@ -136,8 +137,18 @@ class PlayState extends FlxState
         super.update();
     }
 
+    private function nextLevel():Void {
+        Levels.current++;
+        if ( Levels.current == Levels.levels.length ) {
+            FlxG.switchState( new EndState() );
+            return;
+        }
+
+        onSwitchedState( STATE_COUNTDOWN );
+    }
+
     private function onSwitchedState( newState:PLAY_STATE ):Void {
-        GAM.track("PlayState",Std.string(newState));
+        GAM.track("PlayState",Std.string(newState)+" "+Std.string( Levels.current + 1 ));
         //FlxG.destroySounds();
         FlxG.keys.reset();
         state = newState;
@@ -152,8 +163,6 @@ class PlayState extends FlxState
                 FlxG.music.stop();
                 FlxG.play("assets/sfx/win.mp3");
                 showScreen( "assets/screen_win.png" );
-                Levels.current++;
-                Levels.current = Math.round(Math.min( Levels.current, Levels.levels.length-1 ));
             case STATE_PLAY:
                 questLine.visible = false;
                 questText.visible = false;
