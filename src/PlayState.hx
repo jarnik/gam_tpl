@@ -38,6 +38,9 @@ class PlayState extends FlxState
     private var bottomText:FlxText;
     private var countdown:CountDown;
 
+    private var questLine:FlxSprite;
+    private var questText:FlxText;
+
 	override public function create():Void
 	{
         /*
@@ -77,6 +80,11 @@ class PlayState extends FlxState
         bottomLine.makeGraphic( FlxG.width, 32, 0xFF000000 );
         add( bottomText = new FlxText( 0, FlxG.height - 28, FlxG.width, "PRESS THY SPACE" ) );
         bottomText.setFormat( null, 16, 0xf0f0f0, "center" );
+
+        add( questLine = new FlxSprite( 0, 60 ) );
+        questLine.makeGraphic( FlxG.width, 32, 0xFF000000 );
+        add( questText = new FlxText( 0, 64, FlxG.width, "QUEST I: HAMBURG" ) );
+        questText.setFormat( null, 16, 0xf0f0f0, "center" );
         
         Levels.config = Levels.levels[ 0 ];
 
@@ -147,16 +155,36 @@ class PlayState extends FlxState
                 Levels.current++;
                 Levels.current = Math.round(Math.min( Levels.current, Levels.levels.length-1 ));
             case STATE_PLAY:
+                questLine.visible = false;
+                questText.visible = false;
             case STATE_COUNTDOWN:
                 Levels.config = Levels.levels[ Levels.current ];
-                FlxG.log("level "+Levels.current);
                 board.restart();
                 FlxG.playMusic( "assets/music/music.mp3" );
-                //FlxG.play("assets/sfx/start.mp3");
+                questLine.visible = true;
+                questText.visible = true;
+                questText.setText( "QUEST "+getRoman( Levels.current + 1 )+": "+Levels.config.cityName.toUpperCase() );
+
                 hideScreen();
                 countdown.start();
             default:
         }
+    }
+
+    private function getRoman( n:Int ):String {
+        switch ( n ) {
+            case 1: return "I";
+            case 2: return "II";
+            case 3: return "III";
+            case 4: return "IV";
+            case 5: return "V";
+            case 6: return "VI";
+            case 7: return "VII";
+            case 8: return "VIII";
+            case 9: return "IX";
+            case 10: return "X";
+        }
+        return "";
     }
 
     private function showScreen( url:String ):Void {
@@ -175,6 +203,7 @@ class PlayState extends FlxState
     }
 	
     private function onCountDown():Void {
+
         onSwitchedState( STATE_PLAY );
     }
 
