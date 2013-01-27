@@ -20,7 +20,7 @@ class EndState extends FlxState
 		FlxG.mouse.hide();
 
         
-        GAM.track("EndState");
+        GAM.track({state:"EndState"});
 
 	}
 		

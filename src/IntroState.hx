@@ -26,7 +26,7 @@ class IntroState extends FlxState
         add( bottomText = new FlxText( 0, FlxG.height - 28, FlxG.width, "PRESS SPACE" ) );
         bottomText.setFormat( null, 16, 0xf0f0f0, "center" );
 
-        GAM.track("IntroState");
+        GAM.track({state:"IntroState"});
 	}
 	
 	override public function update():Void

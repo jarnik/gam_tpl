@@ -109,7 +109,7 @@ class PlayState extends FlxState
     }
 
     private function onSwitchedState( newState:PLAY_STATE ):Void {
-        //GAM.track("PlayState",Std.string(newState)+" "+Std.string( Levels.current + 1 ));
+        //GAM.track({state:"PlayState",action:Std.string(newState)+" "+Std.string( Levels.current + 1 )});
         FlxG.keys.reset();
         state = newState;
         switch ( state ) {

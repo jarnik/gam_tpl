@@ -37,7 +37,7 @@ class MenuState extends FlxState
         add( bottomText = new FlxText( 0, FlxG.height - 15, FlxG.width, " #OneGameAMonth entry #1 by @Jarnik, Jan 2013" ) );
         bottomText.setFormat( null, 8, 0x808080, "left" );
 
-        GAM.track("MenuState");
+        GAM.track({state:"MenuState"});
 
 	}
 
