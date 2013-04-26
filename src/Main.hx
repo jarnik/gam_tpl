@@ -7,7 +7,6 @@ import nme.events.Event;
 import nme.events.KeyboardEvent;
 import nme.Lib;
 import nme.ui.Keyboard;
-import org.flixel.FlxGame;
 
 /**
  * @author Jarnik
