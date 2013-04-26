@@ -1,10 +1,16 @@
 package;
 
+import gaxe.Gaxe;
 import gaxe.Scene;
+import gaxe.Debug;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
+import nme.events.KeyboardEvent;
+import nme.events.MouseEvent; 
+import nme.ui.Keyboard;
 import pug.render.RenderGroupStates;
 import pug.render.Render;
+import com.eclecticdesignstudio.motion.Actuate;
 
 enum PLAY_STATE {
     STATE_PLAY;
@@ -23,6 +29,9 @@ class TitleScene extends Scene
 		title = cast( Render.renderSymbol( GAM.lib.get("title") ), RenderGroupStates );
 		title.play();
 		addChild( title );
+		
+		//title.fetch("planetix_logo439").onClick( onTitleClicked );
+		title.fetch("planetix_logo439").onEvents( [ MouseEvent.MOUSE_UP ], onTitleClicked );
 		
         /*
         spellCastSignaler = new DirectSignaler(this);
@@ -143,5 +152,17 @@ class TitleScene extends Scene
     private function onCountDown():Void {
         onSwitchedState( STATE_PLAY );
     }*/
+
+	private function onTitleClicked( e:MouseEvent ):Void {
+		Gaxe.head.switchScene( PlayScene );
+	}
+	
+	override public function handleKey( e:KeyboardEvent ):Void {
+		switch ( e.keyCode ) {
+			case Keyboard.RIGHT:
+				if ( e.type == KeyboardEvent.KEY_UP )
+					Gaxe.head.switchScene( PlayScene );
+		}
+	}
 
 }
