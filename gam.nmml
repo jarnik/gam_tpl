@@ -12,7 +12,10 @@
 	<classpath name="src" />
 
 	<assets path="assets" include="*" />
+	<assets path="assets/fonts" include="*" type="font" />
 	<assets path="assets/pugs" include="*" type="binary" />
+	<assets path="assets/sfx" include="*" type="sound" />
+	<assets path="assets/music" include="*" type="music" />
 	
 	<haxelib name="nme" />
 	<haxelib name="format"/>

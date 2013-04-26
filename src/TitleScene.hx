@@ -13,7 +13,7 @@ enum PLAY_STATE {
     STATE_FAIL;
 }
 
-class PlayScene extends Scene
+class TitleScene extends Scene
 {
     //private var board:Board;
 	private var title:RenderGroupStates;
@@ -21,7 +21,7 @@ class PlayScene extends Scene
 	override public function create():Void
 	{
 		title = cast( Render.renderSymbol( GAM.lib.get("title") ), RenderGroupStates );
-		title.render( 0 );
+		title.play();
 		addChild( title );
 		
         /*
