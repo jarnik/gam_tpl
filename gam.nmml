@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<app title="gam" file="build" main="Main" version="0.0.1" company="Jarnik" />
+	<app title="gam" file="build" main="GAM" version="0.0.1" company="Jarnik" />
 	
-	<window width="640" height="480" fps="30" orientation="portrait" resizable="true" if="web" />
-	<window width="0" height="0" fps="30" orientation="landscape" fullscreen="true" unless="web" />
+	<window background="0x303030" width="640" height="480" fps="30" orientation="portrait" resizable="true" if="web" />
+	<window background="0x303030" width="0" height="0" fps="30" orientation="landscape" fullscreen="true" unless="web" />
  	
 	<set name="BUILD_DIR" value="bin" />
 	
@@ -12,10 +12,10 @@
 	<classpath name="src" />
 
 	<assets path="assets" include="*" />
-	<assets path="assets/layouts" include="*" type="binary" />
+	<assets path="assets/pugs" include="*" type="binary" />
 	
 	<haxelib name="nme" />
-	<haxelib name="flixel"/>
+	<haxelib name="format"/>
     <haxelib name="hsl-1" />
     <haxelib name="svg" />
     <haxelib name="actuate" />

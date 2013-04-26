@@ -1,33 +1,52 @@
 package;
 
+import gaxe.Gaxe;
+import gaxe.SoundLib;
+import gaxe.Debug;
+import gaxe.GameLog;
+
+import pug.model.Library;
+
+import nme.display.StageAlign;
+import nme.display.StageScaleMode;
+import nme.display.Sprite;
+import nme.events.Event;
+import nme.events.KeyboardEvent;
 import nme.Lib;
-import org.flixel.FlxGame;
-import org.flixel.FlxG;
+import nme.ui.Keyboard;
+import nme.Assets;
+
+/**
+ * @author Jarnik
+ */
+class GAM extends Gaxe {
 	
-class GAM extends FlxGame
-{	
-
-    private var appID:String;
-    private static var instance:GAM;
-
-	public function new( appID:String )
+	public static var lib:Library;
+	private static var instance:GAM;
+	
+	public static function main() 
 	{
-		var stageWidth:Int = Lib.current.stage.stageWidth;
-		var stageHeight:Int = Lib.current.stage.stageHeight;
-		var ratioX:Float = stageWidth / 320;
-		var ratioY:Float = stageHeight / 240;
-		var ratio:Float = Math.min(ratioX, ratioY);
-		super(Math.floor(stageWidth / ratio), Math.floor(stageHeight / ratio), MenuState, ratio, 30, 30);
-		//super(Math.floor(stageWidth / ratio), Math.floor(stageHeight / ratio), PlayState, ratio, 30, 30);
-		forceDebugger = true;
-
-        instance = this;
-
-        this.appID = appID;
-        initTracker();
+		lib = new Library();
+        lib.onLibLoaded.bindVoid( onLibLoaded );
+        lib.importByteArrayPUG( Assets.getBytes("assets/pugs/gam.pug") );
 	}
-
-    // ----------------- Google Analytics tracking ----------------------- 
+	
+	private static function onLibLoaded():Void {
+		Gaxe.loadGaxe( new GAM("gam-tpl"), new Menu(), 320, 240 );
+	}
+	
+	public static function track( data:Dynamic ):Void {
+        instance._track( data );
+    }
+	
+	private var appID:String;
+	
+	public function new ( appID:String ) {
+		super();
+		instance = this;
+        this.appID = appID;
+		initTracker();
+	}
     
     private function initTracker() :Void {
         GameLog.init( appID, 'http://www.jarnik.com/amfphp/gateway.php' );
@@ -36,11 +55,15 @@ class GAM extends FlxGame
 
     public function _track( data: Dynamic ):Void {
         GameLog.log( data );
-        FlxG.log("tracked "+data);
+        Debug.log("tracked "+data);
     }
-
-    public static function track( data:Dynamic ):Void {
-        instance._track( data );
-    }
-
+	
+	override private function init():Void {
+		super.init();
+		SoundLib.autoInit();
+		switchScene( PlayScene ); 
+	}
+	
+	
+	
 }
