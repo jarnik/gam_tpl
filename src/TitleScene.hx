@@ -12,12 +12,6 @@ import pug.render.RenderGroupStates;
 import pug.render.Render;
 import com.eclecticdesignstudio.motion.Actuate;
 
-enum PLAY_STATE {
-    STATE_PLAY;
-    STATE_COUNTDOWN;
-    STATE_WIN;
-    STATE_FAIL;
-}
 
 class TitleScene extends Scene
 {

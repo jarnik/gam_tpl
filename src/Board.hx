@@ -27,6 +27,7 @@ class Board extends Sprite
 	private var pools:Array<Pool>;
 	private var pheromones:Hash<Array<Pheromone>>;
 	private var map:RenderGroupStates;
+	private var raceCounts:Array<Int>;
 	
 	private var boardContent:Sprite;
 	private var creatureLayer:Sprite;
@@ -41,7 +42,7 @@ class Board extends Sprite
 		
 		map.addSticker( "board", boardContent = new Sprite() );
 		map.addStickerHideRenders( "board" );
-		map.addStickerHideRenders( "bgr" );
+		//map.addStickerHideRenders( "bgr" );
 		map.addStickerHideRenders( "Q" );
 		map.addStickerHideRenders( "T" );
 		map.addStickerHideRenders( "P" );
@@ -51,39 +52,35 @@ class Board extends Sprite
 		
 		map.render( 0, false );
 		
-		//addChild( boardContent = new Sprite() );
-		
 		boardContent.addChild( groundLayer = new Sprite() );
 		boardContent.addChild( pheromoneLayer = new Sprite() );
 		boardContent.addChild( creatureLayer = new Sprite() );
-		
+	}
+	
+	public function reset():Void {
+		while ( groundLayer.numChildren > 0 )
+			groundLayer.removeChildAt( 0 );
+		while ( pheromoneLayer.numChildren > 0 )
+			pheromoneLayer.removeChildAt( 0 );
+		while ( creatureLayer.numChildren > 0 )
+			creatureLayer.removeChildAt( 0 );
+			
 		creatures = [];
 		pheromones = new Hash<Array<Pheromone>>();
 		pheromones.set( Std.string( Type.enumIndex( SMALL ) ), [] );
 		pheromones.set( Std.string( Type.enumIndex( MEDIUM ) ), [] );
 		pheromones.set( Std.string( Type.enumIndex( LARGE ) ), [] );
 		
-		var p:Pool;
 		pools = [];
 		addPool( SMALL, "Q" );
 		addPool( MEDIUM, "P" );
 		addPool( LARGE, "V" );
-		//groundLayer.addChild( p = new Pool( SMALL, 8, 8 ) );
-		//pools.push( p );
 		
-		creatureLayer.addChild( player = new Player( 50, 0 ) );
+		var r:Render = map.fetch( "T" );
+		creatureLayer.addChild( player = new Player( r.x, r.y ) );
 		creatures.push( player );
 		
 		distributeCreatures();
-		
-		/*
-		spawnCreature( LARGE, 400, 100 );		
-		spawnCreature( LARGE, 40, 100 );		
-		spawnCreature( MEDIUM, 280, 20 );		
-		spawnCreature( MEDIUM, 280, 120 );		
-		spawnCreature( SMALL, 80, 120 );		
-		spawnCreature( SMALL, 280, 120 );
-		*/		
 	}
 	
 	private function distributeCreatures():Void {
@@ -93,6 +90,8 @@ class Board extends Sprite
 		var gridY:Float = (Board.H - gridH) / 2;
 		var cols:Int = 10;
 		var rows:Int = 3;
+		
+		raceCounts = [0, 0, 0];
 		
 		var empty:Array<Point> = [];
 		for ( x in 0...cols )
@@ -119,6 +118,7 @@ class Board extends Sprite
 		var c:CreatureAI = new CreatureAI( type, x, y );
 		addCreature( c );		
 		c.setFull( true );
+		raceCounts[ Type.enumIndex( c.size ) - 1 ]++;
 		return c;
 	}
 	
@@ -144,10 +144,15 @@ class Board extends Sprite
 			creatureLayer.setChildIndex( creatures[ i ], i );
 	}
 	
+	public function updateAnims( timeElapsed:Float ):Void {
+		map.update( timeElapsed );
+	}
+	
 	public function update( timeElapsed:Float ):Void {
 		for ( c in creatures ) {
 			c.update( timeElapsed );
 		}
+		
 		sortCreatures();
 		var c1:Creature;
 		var c2:Creature;
@@ -204,6 +209,8 @@ class Board extends Sprite
 		
 		for ( c in dead ) {
 			creatureLayer.removeChild( c );
+			if ( c.size != TINY )
+				raceCounts[ Type.enumIndex( c.size ) - 1 ]--;
 			creatures.remove( c );
 		}
 		
@@ -265,6 +272,13 @@ class Board extends Sprite
 		if ( instant )
 			player.moveTo( r.x, r.y );
 		player.setTarget( r.x, r.y );
+	}
+	
+	public function IsGameOver():Bool {
+		for ( c in raceCounts )
+			if ( c < 2 )
+				return true;
+		return false;
 	}
 	
 	public function stepPlayer( dx:Int, dy:Int ):Void {

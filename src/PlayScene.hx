@@ -9,6 +9,13 @@ import gaxe.Debug;
 
 import nme.events.MouseEvent;
 
+
+enum PLAY_STATE {
+    STATE_PLAY;
+    STATE_WIN;
+    STATE_FAIL;
+}
+
 /**
  * ...
  * @author Jarnik
@@ -16,6 +23,7 @@ import nme.events.MouseEvent;
 class PlayScene extends Scene
 {
 	private var board:Board;
+	private var overlays:RenderGroupStates;
 	private var hDir:Int;
 	private var vDir:Int;
  
@@ -23,23 +31,63 @@ class PlayScene extends Scene
 		addChild( board = new Board() );
 		board.y = 120;
 		
-		hDir = 0;
-		vDir = 0;
+		addChild( overlays = cast( Render.renderSymbol( GAM.lib.get("overlays") ), RenderGroupStates ) );
+		//map.switchState( "main" );
+		overlays.switchState( "gameover" );
+		overlays.render( 0, false );
+		overlays.fetch("continue").onClick( onContinueClick );		
 		
-		board.mouseChildren = false;
-		board.addEventListener( MouseEvent.CLICK, onClick );
+		//board.mouseChildren = false;
+		//board.addEventListener( MouseEvent.CLICK, onClick );
+	}
+	
+	override private function reset():Void 
+	{
+		super.reset();
+		switchState( STATE_PLAY );
+		//switchState( STATE_FAIL );
 	}
 	
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
-		board.update( elapsed );
+		overlays.update( elapsed );
 		
-		if ( hDir != 0 || vDir != 0 ) {
-			board.stepPlayer( hDir, vDir );
+		switch ( state ) {
+			case STATE_PLAY:				
+				board.updateAnims( elapsed );
+				board.update( elapsed );
+				
+				if ( hDir != 0 || vDir != 0 ) {
+					board.stepPlayer( hDir, vDir );
+				}
+				
+				if ( board.IsGameOver() )
+					switchState( STATE_FAIL );
+			case STATE_FAIL:
+				board.updateAnims( elapsed );
+			default:
 		}
 	}
 	
+	override private function handleSwitchState(id:Dynamic):Bool 
+	{
+		switch ( id ) {
+			case STATE_PLAY:
+				hDir = 0;
+				vDir = 0;
+				board.reset();
+				overlays.play( false, 30, "play" );
+			case STATE_FAIL:
+				overlays.play( false, 30, "gameover" );
+			default:
+		}
+		return super.handleSwitchState(id);
+	}
+	
 	override public function handleKey( e:KeyboardEvent ):Void {
+		if ( state != STATE_PLAY )
+			return;
+			
 		if ( e.type == KeyboardEvent.KEY_DOWN ) {
 			switch ( e.keyCode ) {
 				case Keyboard.Q:
@@ -86,7 +134,15 @@ class PlayScene extends Scene
 	}
 	
 	private function onClick( e:MouseEvent ):Void {
+		if ( state != STATE_PLAY )
+			return;
+		
 		board.setPlayerTargetPoint( e.localX, e.localY, e.shiftKey );
+	}
+	
+	private function onContinueClick( e:MouseEvent ):Void {
+		switchState( STATE_PLAY );
+		refocus();
 	}
 	
 }

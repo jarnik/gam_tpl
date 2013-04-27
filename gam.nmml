@@ -23,6 +23,4 @@
     <haxelib name="svg" />
     <haxelib name="actuate" />
 
-    <haxedef name="network-sandbox" />
-
 </project>
