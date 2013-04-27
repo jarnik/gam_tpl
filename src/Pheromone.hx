@@ -15,7 +15,16 @@ class Pheromone extends Grid
 	public function new( kind:CREATURE_TYPE, x:Float, y:Float ) {
 		this.kind = kind;
 		super( "pheromone" );
-		skin.render( Type.enumIndex( kind ) - 1 );
+		switch ( kind ) {
+			case SMALL: 
+				skin.switchState("small");
+			case MEDIUM: 
+				skin.switchState("medium");
+			case LARGE: 
+				skin.switchState("large");
+			default:
+		}
+		skin.render( 0, false );
 		active = true;
 		life = 4;
 		

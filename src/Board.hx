@@ -6,6 +6,11 @@ import pug.render.RenderGroup;
 import gaxe.Debug;
 import Creature;
 
+typedef RACE_CONF = {
+	size:CREATURE_TYPE,
+	count:Int
+}
+
 /**
  * ...
  * @author Jarnik
@@ -53,12 +58,45 @@ class Board extends Sprite
 		creatureLayer.addChild( player = new Player( 50, 0 ) );
 		creatures.push( player );
 		
+		distributeCreatures();
+		
+		/*
 		spawnCreature( LARGE, 400, 100 );		
 		spawnCreature( LARGE, 40, 100 );		
 		spawnCreature( MEDIUM, 280, 20 );		
 		spawnCreature( MEDIUM, 280, 120 );		
 		spawnCreature( SMALL, 80, 120 );		
-		spawnCreature( SMALL, 280, 120 );		
+		spawnCreature( SMALL, 280, 120 );
+		*/		
+	}
+	
+	private function distributeCreatures():Void {
+		var gridW:Float = 600;
+		var gridH:Float = 160;
+		var gridX:Float = (Board.W - gridW) / 2;
+		var gridY:Float = (Board.H - gridH) / 2;
+		var cols:Int = 10;
+		var rows:Int = 3;
+		
+		var empty:Array<Point> = [];
+		for ( x in 0...cols )
+			for ( y in 0...rows )
+				empty.push( new Point( gridX + gridW / (cols - 1) * x, gridY + gridH / (rows - 1) * y ) );
+		
+		var conf:Array<RACE_CONF> = [
+			{ size:SMALL, count: 3 }, 
+			{ size:MEDIUM, count: 3 }, 
+			{ size:LARGE, count: 3 }
+		];
+		
+		var r:Int;
+		for ( c in conf ) {
+			for ( i in 0...c.count ) {
+				r = Math.floor( Math.random() * empty.length );
+				spawnCreature( c.size, empty[ r ].x, empty[ r ].y );
+				empty.remove( empty[ r ] );
+			}
+		}
 	}
 	
 	private function spawnCreature( type:CREATURE_TYPE, x:Float, y:Float ):Creature {

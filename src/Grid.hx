@@ -21,7 +21,7 @@ class Grid extends Sprite
 	}
 	
 	public function touches( c:Grid ):Bool {
-		var threshold:Float = 16;
+		var threshold:Float = 25;
 		if ( Point.distance( new Point( x, y ), new Point( c.x, c.y ) ) < threshold )
 			return true;
 		return false;
