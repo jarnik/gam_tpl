@@ -53,6 +53,8 @@ class Creature extends Grid {
 	public function setTarget( x:Float, y:Float ):Void {
 		if ( target == null )
 			target = new Point();
+		x = Math.max( 0, Math.min( Board.W, x ) );
+		y = Math.max( 0, Math.min( Board.H, y ) );
 		target.x = x;
 		target.y = y;
 	}

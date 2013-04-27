@@ -205,9 +205,16 @@ class Board extends Sprite
 		creatures.push( c );
 	}
 	
-	public function setPlayerTarget( key:String ):Void {
+	public function setPlayerTarget( key:String, instant:Bool ):Void {
 		var r:Render = map.fetch( key );
+		if ( instant )
+			player.moveTo( r.x, r.y );
 		player.setTarget( r.x, r.y );
+	}
+	
+	public function stepPlayer( dx:Int, dy:Int ):Void {
+		var step:Float = 4;
+		player.setTarget( player.x + dx * step, player.y + dy * step );
 	}
 	
 }
