@@ -31,7 +31,7 @@ class TitleScene extends Scene
 		addChild( title );
 		
 		//title.fetch("planetix_logo439").onClick( onTitleClicked );
-		title.fetch("planetix_logo439").onEvents( [ MouseEvent.MOUSE_UP ], onTitleClicked );
+		title.fetch("button").onEvents( [ MouseEvent.MOUSE_UP ], onTitleClicked );
 		
         /*
         spellCastSignaler = new DirectSignaler(this);

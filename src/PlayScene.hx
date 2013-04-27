@@ -4,6 +4,7 @@ import nme.events.KeyboardEvent;
 import nme.ui.Keyboard;
 import pug.render.RenderGroupStates;
 import pug.render.Render;
+import Creature;
 
 /**
  * ...
@@ -11,18 +12,30 @@ import pug.render.Render;
  */
 class PlayScene extends Scene
 {
-	private var heart:RenderGroupStates;
+	private var board:Board;
  
 	override private function create():Void {
-		heart = cast( Render.renderSymbol( GAM.lib.get("heart") ), RenderGroupStates );
-		heart.render( 0 );
-		addChild( heart );
+		addChild( board = new Board() );
+		board.y = 120;
+	}
+	
+	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
+		board.update( elapsed );
 	}
 	
 	override public function handleKey( e:KeyboardEvent ):Void {
-		switch ( e.keyCode ) {
-			case Keyboard.RIGHT:
-				heart.x += 5;
+		if ( e.type == KeyboardEvent.KEY_DOWN ) {
+			switch ( e.keyCode ) {
+				case Keyboard.Q:
+					board.setPlayerTarget( "Q" );
+				case Keyboard.P:
+					board.setPlayerTarget( "P" );
+				case Keyboard.Z:
+					board.setPlayerTarget( "Z" );
+				case Keyboard.M:
+					board.setPlayerTarget( "M" );
+			}
 		}
 	}
 	

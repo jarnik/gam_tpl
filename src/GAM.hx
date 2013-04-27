@@ -32,7 +32,7 @@ class GAM extends Gaxe {
 	}
 	
 	private static function onLibLoaded():Void {
-		Gaxe.loadGaxe( new GAM("gam-tpl"), new Menu(), 320, 240 );
+		Gaxe.loadGaxe( new GAM("ld26"), new Menu(), 320, 240 );
 	}
 	
 	public static function track( data:Dynamic ):Void {
@@ -61,7 +61,8 @@ class GAM extends Gaxe {
 	override private function init():Void {
 		super.init();
 		SoundLib.autoInit();
-		switchScene( TitleScene ); 
+		//switchScene( TitleScene ); 
+		switchScene( PlayScene ); 
 	}
 	
 	
