@@ -14,12 +14,15 @@ class Board extends Sprite
 	public static inline var W:Float = 320;
 	public static inline var H:Float = 120;
 	
-	private var player:Creature;
+	private var player:Player;
 	private var creatures:Array<Creature>;
+	private var pools:Array<Pool>;
+	private var pheromones:Hash<Array<Pheromone>>;
 	private var map:RenderGroup;
 	
 	private var creatureLayer:Sprite;
 	private var groundLayer:Sprite;
+	private var pheromoneLayer:Sprite;
 	
 	public function new() {
 		super();
@@ -28,14 +31,18 @@ class Board extends Sprite
 		map.render( 0 );		
 		
 		addChild( groundLayer = new Sprite() );
+		addChild( pheromoneLayer = new Sprite() );
 		addChild( creatureLayer = new Sprite() );
 		
 		creatures = [];
+		pheromones = new Hash<Array<Pheromone>>();
+		pheromones.set( Std.string( Type.enumIndex( SMALL ) ), [] );
+		pheromones.set( Std.string( Type.enumIndex( MEDIUM ) ), [] );
+		pheromones.set( Std.string( Type.enumIndex( LARGE ) ), [] );
 		
 		groundLayer.addChild( new Pool( SMALL, 8, 8 ) );
 		
-		creatureLayer.addChild( player = new Creature( TINY ) );
-		player.moveTo( 50, 0 );
+		creatureLayer.addChild( player = new Player( 50, 0 ) );
 		creatures.push( player );
 		
 		spawnCreature( LARGE, 200, 50 );		
@@ -75,6 +82,7 @@ class Board extends Sprite
 		var c1:Creature;
 		var c2:Creature;
 		var dead:Array<Creature> = [];
+		var deadPheromones:Array<Pheromone> = [];
 		for ( i in 0...creatures.length ) {
 			c1 = creatures[ i ];
 			for ( j in (i + 1)...creatures.length ) {
@@ -87,7 +95,7 @@ class Board extends Sprite
 					
 				c2 = creatures[ j ];
 				// devouring
-				if ( c1.devours( c2 ) ) {
+				/*if ( c1.devours( c2 ) ) {
 					c1.setFull( true );
 					devourCreature( c2 );
 				} else if ( c2.devours( c1 ) ) {
@@ -99,7 +107,7 @@ class Board extends Sprite
 					bornCreature( c1, c2 );
 				} else if ( c1.mates( c2 ) ) {
 					bornCreature( c1, c2 );
-				}
+				}*/
 			}
 			
 			if ( !c1.alive )
@@ -107,12 +115,47 @@ class Board extends Sprite
 			
 			// swamp interaction
 			// pheromone interaction
+			if ( Std.is( c1, CreatureAI ) )
+				for ( p in pheromones.get( Std.string( Type.enumIndex( c1.size ) ) ) ) {
+					if ( p.active ) {
+						cast( c1, CreatureAI ).smell( p );						
+					}
+				}
+		}
+		
+		for ( k in Type.enumIndex( SMALL )...Type.enumIndex( LARGE )+1 ) {
+			for ( p in pheromones.get( Std.string( k ) ) ) {
+				p.update( timeElapsed );
+				if ( !p.active )
+					deadPheromones.push( p );
+			}
 		}
 		
 		for ( c in dead ) {
 			creatureLayer.removeChild( c );
 			creatures.remove( c );
 		}
+		
+		for ( p in deadPheromones ) {
+			removePheromone( p );
+		}
+		
+		var drop:Pheromone = player.hasDrop();
+		if ( drop != null ) {
+			addPheromone( drop );
+		}
+	}
+	
+	private function addPheromone( p:Pheromone ):Void {
+		var ps:Array<Pheromone> = pheromones.get( Std.string( Type.enumIndex( p.kind ) ) );
+		ps.push( p );
+		pheromoneLayer.addChild( p );
+	}
+	
+	private function removePheromone( p:Pheromone ):Void {
+		var ps:Array<Pheromone> = pheromones.get( Std.string( Type.enumIndex( p.kind ) ) );
+		ps.remove( p );
+		pheromoneLayer.removeChild( p );
 	}
 	
 	public function devourCreature( c:Creature ):Void {

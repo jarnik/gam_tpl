@@ -1,6 +1,8 @@
 package ;
 
+import nme.geom.Point;
 import Creature;
+
 
 /**
  * ...
@@ -9,12 +11,14 @@ import Creature;
 class CreatureAI extends Creature
 {
 	public var idleTimer:Float;
+	public var pheromoneTarget:Bool;
 
 	public function new( t:CREATURE_TYPE, x:Float, y:Float ) {
 		super( t );
 		moveTo( x, y );
-		speed = 10;
+		//speed = 10;
 		idleTimer = -1;
+		pheromoneTarget = false;
 		
 		setRandomTarget();
 	}
@@ -52,7 +56,21 @@ class CreatureAI extends Creature
 			if ( idleTimer <= 0)
 				setRandomTarget();
 		}
+		speed = pheromoneTarget ? 40 : 10;
 		super.update(timeElapsed);
+		pheromoneTarget = false;
+	}
+	
+	public function smell( p:Pheromone ):Void {
+		var consumeThreshold:Float = 8;
+		var smellThreshold:Float = 25;
+		var d:Float = Point.distance( position, new Point( p.x, p.y ) );
+		if ( d < consumeThreshold ) {
+			p.active = false;
+		} else if ( d < smellThreshold ) {
+			setTarget( p.x, p.y );
+			pheromoneTarget = true;
+		}
 	}
 	
 }
