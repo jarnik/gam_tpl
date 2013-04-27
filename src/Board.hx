@@ -253,7 +253,7 @@ class Board extends Sprite
 	
 	public function stepPlayer( dx:Int, dy:Int ):Void {
 		var step:Float = 4;
-		player.setTarget( player.x + dx * step, player.y + dy * step );
+		player.setTarget( player.x + dx * step, player.y + dy * step, true );
 	}
 	
 	public function setPlayerTargetPoint( x:Float, y:Float, instant:Bool ):Void {

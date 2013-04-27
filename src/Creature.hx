@@ -49,16 +49,23 @@ class Creature extends Grid {
 	}
 	
 	public function moveTo( x:Float, y:Float ):Void {
+		if ( x < 0 || x > Board.W ) {
+			x = ( x + Board.W ) % Board.W;
+			if ( target != null )
+				target.x = ( target.x + Board.W ) % Board.W;
+		}
+		
 		position.x = x;
 		position.y = y;
 		this.x = Math.round( position.x );
 		this.y = Math.round( position.y );
 	}
 	
-	public function setTarget( x:Float, y:Float ):Void {
+	public function setTarget( x:Float, y:Float, allowBoundless:Bool = false ):Void {
 		if ( target == null )
 			target = new Point();
-		x = Math.max( 0, Math.min( Board.W, x ) );
+		if ( !allowBoundless )
+			x = Math.max( 0, Math.min( Board.W, x ) );
 		y = Math.max( 0, Math.min( Board.H, y ) );
 		target.x = x;
 		target.y = y;
