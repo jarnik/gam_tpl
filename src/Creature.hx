@@ -19,7 +19,7 @@ enum CREATURE_TYPE {
 class Creature extends Grid {
 
 	private var target:Point;
-	private var position:Point;
+	public var position:Point;
 	private var speed:Float;
 	
 	public var full:Bool;
@@ -38,9 +38,9 @@ class Creature extends Grid {
 			case LARGE: skin.render( 3 );
 		}
 		
-		full = false;
 		position = new Point();
 		speed = 80;
+		setFull( false );
 	}
 	
 	public function moveTo( x:Float, y:Float ):Void {
@@ -57,13 +57,6 @@ class Creature extends Grid {
 		target.y = y;
 	}
 	
-	public function touches( c:Creature ):Bool {
-		var threshold:Float = 16;
-		if ( Point.distance( new Point( x, y ), new Point( c.x, c.y ) ) < threshold )
-			return true;
-		return false;
-	}
-	
 	public function devours( c:Creature ):Bool {
 		if ( Type.enumIndex( size ) == Type.enumIndex( c.size ) + 1 && !full )
 			return true;
@@ -76,6 +69,7 @@ class Creature extends Grid {
 	
 	public function setFull( f:Bool ):Void {
 		full = f;
+		scaleX = full ? 1 : 0.5;
 	}
 	
 	private function onTargetReached():Void {

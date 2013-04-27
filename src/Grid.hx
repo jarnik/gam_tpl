@@ -2,6 +2,7 @@ package ;
 import nme.display.Sprite;
 import pug.render.RenderGroupStates;
 import pug.render.Render;
+import nme.geom.Point;
 
 /**
  * ...
@@ -19,4 +20,10 @@ class Grid extends Sprite
 		addChild( skin );
 	}
 	
+	public function touches( c:Grid ):Bool {
+		var threshold:Float = 16;
+		if ( Point.distance( new Point( x, y ), new Point( c.x, c.y ) ) < threshold )
+			return true;
+		return false;
+	}
 }

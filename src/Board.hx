@@ -1,5 +1,6 @@
 package ;
 import nme.display.Sprite;
+import nme.geom.Point;
 import pug.render.Render;
 import pug.render.RenderGroup;
 import gaxe.Debug;
@@ -16,6 +17,7 @@ class Board extends Sprite
 	
 	private var player:Player;
 	private var creatures:Array<Creature>;
+	private var pendingSpawns:Array<Creature>;
 	private var pools:Array<Pool>;
 	private var pheromones:Hash<Array<Pheromone>>;
 	private var map:RenderGroup;
@@ -40,22 +42,25 @@ class Board extends Sprite
 		pheromones.set( Std.string( Type.enumIndex( MEDIUM ) ), [] );
 		pheromones.set( Std.string( Type.enumIndex( LARGE ) ), [] );
 		
-		groundLayer.addChild( new Pool( SMALL, 8, 8 ) );
+		var p:Pool;
+		pools = [];
+		groundLayer.addChild( p = new Pool( SMALL, 8, 8 ) );
+		pools.push( p );
 		
 		creatureLayer.addChild( player = new Player( 50, 0 ) );
 		creatures.push( player );
 		
-		spawnCreature( LARGE, 200, 50 );		
-		spawnCreature( LARGE, 20, 50 );		
-		spawnCreature( MEDIUM, 140, 10 );		
-		spawnCreature( MEDIUM, 140, 60 );		
+		//spawnCreature( LARGE, 200, 50 );		
+		//spawnCreature( LARGE, 20, 50 );		
+		//spawnCreature( MEDIUM, 140, 10 );		
+		//spawnCreature( MEDIUM, 140, 60 );		
 		spawnCreature( SMALL, 40, 60 );		
+		spawnCreature( SMALL, 140, 60 );		
 	}
 	
 	private function spawnCreature( type:CREATURE_TYPE, x:Float, y:Float ):Creature {
 		var c:CreatureAI = new CreatureAI( type, x, y );
-		creatureLayer.addChild( c );
-		creatures.push( c );
+		addCreature( c );		
 		return c;
 	}
 	
@@ -83,6 +88,7 @@ class Board extends Sprite
 		var c2:Creature;
 		var dead:Array<Creature> = [];
 		var deadPheromones:Array<Pheromone> = [];
+		pendingSpawns = [];
 		for ( i in 0...creatures.length ) {
 			c1 = creatures[ i ];
 			for ( j in (i + 1)...creatures.length ) {
@@ -95,7 +101,7 @@ class Board extends Sprite
 					
 				c2 = creatures[ j ];
 				// devouring
-				/*if ( c1.devours( c2 ) ) {
+				if ( c1.devours( c2 ) ) {
 					c1.setFull( true );
 					devourCreature( c2 );
 				} else if ( c2.devours( c1 ) ) {
@@ -107,7 +113,7 @@ class Board extends Sprite
 					bornCreature( c1, c2 );
 				} else if ( c1.mates( c2 ) ) {
 					bornCreature( c1, c2 );
-				}*/
+				}
 			}
 			
 			if ( !c1.alive )
@@ -136,13 +142,26 @@ class Board extends Sprite
 			creatures.remove( c );
 		}
 		
-		for ( p in deadPheromones ) {
+		for ( p in deadPheromones )
 			removePheromone( p );
-		}
 		
+		for ( s in pendingSpawns )
+			addCreature( s );
+			
 		var drop:Pheromone = player.hasDrop();
-		if ( drop != null ) {
+		if ( drop != null )
 			addPheromone( drop );
+		
+		if ( !player.alive ) {
+			player.alive = true;
+			addCreature( player );
+			player.moveTo( 160, 0 );
+			player.setTarget( 160, 0 );
+			player.setTaint( null );
+		} else {
+			for ( p in pools ) 
+				if ( p.touches( player ) )
+					player.setTaint( p.kind );
 		}
 	}
 	
@@ -165,6 +184,14 @@ class Board extends Sprite
 	public function bornCreature( c1:Creature, c2:Creature ):Void {
 		c1.setFull( false );
 		c2.setFull( false );
+		var p:Point = Point.interpolate( c1.position, c2.position, 0.5 );
+		var c:Creature = new CreatureAI( c1.size, p.x, p.y );
+		pendingSpawns.push( c );
+	}
+	
+	public function addCreature( c:Creature ):Void {
+		creatureLayer.addChild( c );
+		creatures.push( c );
 	}
 	
 	public function setPlayerTarget( key:String ):Void {

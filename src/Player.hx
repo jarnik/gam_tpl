@@ -15,13 +15,13 @@ class Player extends Creature
 	public function new( x:Float, y:Float ) {
 		super( TINY );
 		moveTo( x, y );
-		taint = SMALL;
+		setTaint( null );
 		lastDrop = new Point( Math.POSITIVE_INFINITY, Math.POSITIVE_INFINITY );
 	}
 	
 	public function hasDrop():Pheromone {
 		var threshold:Float = 16;
-		if ( Point.distance( lastDrop, position ) > threshold ) {
+		if ( taint != null && Point.distance( lastDrop, position ) > threshold ) {
 			lastDrop.x = position.x;
 			lastDrop.y = position.y;
 			return new Pheromone( taint, position.x, position.y );
@@ -29,4 +29,7 @@ class Player extends Creature
 		return null;
 	}
 	
+	public function setTaint( t:CREATURE_TYPE ):Void {
+		taint = t;
+	}
 }
