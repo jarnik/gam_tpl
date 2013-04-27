@@ -102,6 +102,7 @@ class Board extends Sprite
 	private function spawnCreature( type:CREATURE_TYPE, x:Float, y:Float ):Creature {
 		var c:CreatureAI = new CreatureAI( type, x, y );
 		addCreature( c );		
+		c.setFull( true );
 		return c;
 	}
 	

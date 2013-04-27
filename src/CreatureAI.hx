@@ -23,7 +23,7 @@ class CreatureAI extends Creature
 	}
 	
 	private function setRandomTarget():Void {
-		var range:Float = 20;
+		var range:Float = 80;
 		var a:Float = Math.random() * Math.PI * 2;
 		var d:Float = ( Math.random() + 0.5 ) *  range;
 		
@@ -55,7 +55,7 @@ class CreatureAI extends Creature
 			if ( idleTimer <= 0)
 				setRandomTarget();
 		}
-		speed = pheromoneTarget ? 80 : ( full ? 40 : 20 );
+		speed = pheromoneTarget ? 80 : ( full ? 40 : 60 );
 		super.update(timeElapsed);
 		pheromoneTarget = false;
 	}
