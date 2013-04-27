@@ -5,6 +5,9 @@ import nme.ui.Keyboard;
 import pug.render.RenderGroupStates;
 import pug.render.Render;
 import Creature;
+import gaxe.Debug;
+
+import nme.events.MouseEvent;
 
 /**
  * ...
@@ -22,6 +25,9 @@ class PlayScene extends Scene
 		
 		hDir = 0;
 		vDir = 0;
+		
+		board.mouseChildren = false;
+		board.addEventListener( MouseEvent.CLICK, onClick );
 	}
 	
 	override public function update(elapsed:Float):Void {
@@ -77,6 +83,10 @@ class PlayScene extends Scene
 						vDir = 0;
 			}
 		}
+	}
+	
+	private function onClick( e:MouseEvent ):Void {
+		board.setPlayerTargetPoint( e.localX, e.localY, e.shiftKey );
 	}
 	
 }
