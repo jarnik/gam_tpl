@@ -5,6 +5,7 @@ import pug.render.Render;
 import pug.render.RenderGroup;
 import gaxe.Debug;
 import Creature;
+import pug.render.RenderGroupStates;
 
 typedef RACE_CONF = {
 	size:CREATURE_TYPE,
@@ -25,8 +26,9 @@ class Board extends Sprite
 	private var pendingSpawns:Array<Creature>;
 	private var pools:Array<Pool>;
 	private var pheromones:Hash<Array<Pheromone>>;
-	private var map:RenderGroup;
+	private var map:RenderGroupStates;
 	
+	private var boardContent:Sprite;
 	private var creatureLayer:Sprite;
 	private var groundLayer:Sprite;
 	private var pheromoneLayer:Sprite;
@@ -34,12 +36,26 @@ class Board extends Sprite
 	public function new() {
 		super();
 		
-		addChild( map = cast( Render.renderSymbol( GAM.lib.get("playscreen") ), RenderGroup ) );
-		map.render( 0 );		
+		addChild( map = cast( Render.renderSymbol( GAM.lib.get("playscreen") ), RenderGroupStates ) );
+		map.switchState( "main" );
 		
-		addChild( groundLayer = new Sprite() );
-		addChild( pheromoneLayer = new Sprite() );
-		addChild( creatureLayer = new Sprite() );
+		map.addSticker( "board", boardContent = new Sprite() );
+		map.addStickerHideRenders( "board" );
+		map.addStickerHideRenders( "bgr" );
+		map.addStickerHideRenders( "Q" );
+		map.addStickerHideRenders( "T" );
+		map.addStickerHideRenders( "P" );
+		map.addStickerHideRenders( "Z" );
+		map.addStickerHideRenders( "V" );
+		map.addStickerHideRenders( "M" );
+		
+		map.render( 0, false );
+		
+		//addChild( boardContent = new Sprite() );
+		
+		boardContent.addChild( groundLayer = new Sprite() );
+		boardContent.addChild( pheromoneLayer = new Sprite() );
+		boardContent.addChild( creatureLayer = new Sprite() );
 		
 		creatures = [];
 		pheromones = new Hash<Array<Pheromone>>();
