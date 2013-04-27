@@ -35,6 +35,10 @@ class PlayScene extends Scene
 					board.setPlayerTarget( "Z" );
 				case Keyboard.M:
 					board.setPlayerTarget( "M" );
+				case Keyboard.T:
+					board.setPlayerTarget( "T" );
+				case Keyboard.V:
+					board.setPlayerTarget( "V" );
 			}
 		}
 	}

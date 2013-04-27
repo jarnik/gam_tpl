@@ -44,16 +44,19 @@ class Board extends Sprite
 		
 		var p:Pool;
 		pools = [];
-		groundLayer.addChild( p = new Pool( SMALL, 8, 8 ) );
-		pools.push( p );
+		addPool( SMALL, "Q" );
+		addPool( MEDIUM, "P" );
+		addPool( LARGE, "V" );
+		//groundLayer.addChild( p = new Pool( SMALL, 8, 8 ) );
+		//pools.push( p );
 		
 		creatureLayer.addChild( player = new Player( 50, 0 ) );
 		creatures.push( player );
 		
-		//spawnCreature( LARGE, 200, 50 );		
-		//spawnCreature( LARGE, 20, 50 );		
-		//spawnCreature( MEDIUM, 140, 10 );		
-		//spawnCreature( MEDIUM, 140, 60 );		
+		spawnCreature( LARGE, 200, 50 );		
+		spawnCreature( LARGE, 20, 50 );		
+		spawnCreature( MEDIUM, 140, 10 );		
+		spawnCreature( MEDIUM, 140, 60 );		
 		spawnCreature( SMALL, 40, 60 );		
 		spawnCreature( SMALL, 140, 60 );		
 	}
@@ -62,6 +65,13 @@ class Board extends Sprite
 		var c:CreatureAI = new CreatureAI( type, x, y );
 		addCreature( c );		
 		return c;
+	}
+	
+	private function addPool( type:CREATURE_TYPE, template:String ):Void {
+		var r:Render = map.fetch( template );
+		var p:Pool = new Pool( type, r.x, r.y );
+		groundLayer.addChild( p );
+		pools.push( p );
 	}
 	
 	private function sortByY( c1:Creature, c2:Creature ):Int {
@@ -155,8 +165,9 @@ class Board extends Sprite
 		if ( !player.alive ) {
 			player.alive = true;
 			addCreature( player );
-			player.moveTo( 160, 0 );
-			player.setTarget( 160, 0 );
+			var r:Render = map.fetch( "T" );
+			player.moveTo( r.x, r.y );
+			player.setTarget( r.x, r.y );
 			player.setTaint( null );
 		} else {
 			for ( p in pools ) 
