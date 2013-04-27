@@ -16,7 +16,6 @@ class CreatureAI extends Creature
 	public function new( t:CREATURE_TYPE, x:Float, y:Float ) {
 		super( t );
 		moveTo( x, y );
-		//speed = 10;
 		idleTimer = -1;
 		pheromoneTarget = false;
 		
@@ -56,7 +55,7 @@ class CreatureAI extends Creature
 			if ( idleTimer <= 0)
 				setRandomTarget();
 		}
-		speed = pheromoneTarget ? 40 : 10;
+		speed = pheromoneTarget ? 80 : ( full ? 40 : 20 );
 		super.update(timeElapsed);
 		pheromoneTarget = false;
 	}

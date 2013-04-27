@@ -32,14 +32,19 @@ class Creature extends Grid {
 		alive = true;
 		
 		switch ( t ) {
-			case TINY: skin.render( 0 );
-			case SMALL: skin.render( 1 );
-			case MEDIUM: skin.render( 2 );
-			case LARGE: skin.render( 3 );
+			case TINY: 
+				skin.switchState("player");
+			case SMALL: 
+				skin.switchState("small");
+			case MEDIUM: 
+				skin.switchState("medium");
+			case LARGE: 
+				skin.switchState("large");
 		}
+		skin.render( 0, false );
 		
 		position = new Point();
-		speed = 80;
+		speed = 160;
 		setFull( false );
 	}
 	
@@ -71,7 +76,8 @@ class Creature extends Grid {
 	
 	public function setFull( f:Bool ):Void {
 		full = f;
-		scaleX = full ? 1 : 0.5;
+		//scaleX = full ? 1 : 0.5;
+		skin.render( full ? 1 : 0, false );
 	}
 	
 	private function onTargetReached():Void {

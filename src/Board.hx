@@ -12,8 +12,8 @@ import Creature;
  */
 class Board extends Sprite
 {
-	public static inline var W:Float = 320;
-	public static inline var H:Float = 120;
+	public static inline var W:Float = 640;
+	public static inline var H:Float = 240;
 	
 	private var player:Player;
 	private var creatures:Array<Creature>;
@@ -53,12 +53,12 @@ class Board extends Sprite
 		creatureLayer.addChild( player = new Player( 50, 0 ) );
 		creatures.push( player );
 		
-		spawnCreature( LARGE, 200, 50 );		
-		spawnCreature( LARGE, 20, 50 );		
-		spawnCreature( MEDIUM, 140, 10 );		
-		spawnCreature( MEDIUM, 140, 60 );		
-		spawnCreature( SMALL, 40, 60 );		
-		spawnCreature( SMALL, 140, 60 );		
+		spawnCreature( LARGE, 400, 100 );		
+		spawnCreature( LARGE, 40, 100 );		
+		spawnCreature( MEDIUM, 280, 20 );		
+		spawnCreature( MEDIUM, 280, 120 );		
+		spawnCreature( SMALL, 80, 120 );		
+		spawnCreature( SMALL, 280, 120 );		
 	}
 	
 	private function spawnCreature( type:CREATURE_TYPE, x:Float, y:Float ):Creature {

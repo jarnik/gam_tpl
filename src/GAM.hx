@@ -32,7 +32,7 @@ class GAM extends Gaxe {
 	}
 	
 	private static function onLibLoaded():Void {
-		Gaxe.loadGaxe( new GAM("ld26"), new Menu(), 320, 240 );
+		Gaxe.loadGaxe( new GAM("ld26"), new Menu(), 640, 480 );
 	}
 	
 	public static function track( data:Dynamic ):Void {

@@ -1,0 +1,5 @@
+ x SHIFT + key to teleport 
+ x hungry creatures move faster
+ x click to set goal
+ x SHIFT + click to teleport
+ - randomly distribute set number of creatures
