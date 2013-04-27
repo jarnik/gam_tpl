@@ -61,8 +61,8 @@ class CreatureAI extends Creature
 	}
 	
 	public function smell( p:Pheromone ):Void {
-		var consumeThreshold:Float = 8;
-		var smellThreshold:Float = 25;
+		var consumeThreshold:Float = 16;
+		var smellThreshold:Float = 50;
 		var d:Float = Point.distance( position, new Point( p.x, p.y ) );
 		if ( d < consumeThreshold ) {
 			p.active = false;
