@@ -8,11 +8,13 @@ import Creature;
  */
 class CreatureAI extends Creature
 {
+	public var idleTimer:Float;
 
 	public function new( t:CREATURE_TYPE, x:Float, y:Float ) {
 		super( t );
 		moveTo( x, y );
-		//speed = 10;
+		speed = 10;
+		idleTimer = -1;
 		
 		setRandomTarget();
 	}
@@ -38,7 +40,19 @@ class CreatureAI extends Creature
 	}
 	
 	override private function onTargetReached():Void {
-		setRandomTarget();
+		//setRandomTarget();
+		target == null;
+		idleTimer = Math.random() * 1;
+	}
+	
+	override public function update(timeElapsed:Float):Void 
+	{
+		if ( idleTimer > 0 ) {
+			idleTimer -= timeElapsed;
+			if ( idleTimer <= 0)
+				setRandomTarget();
+		}
+		super.update(timeElapsed);
 	}
 	
 }

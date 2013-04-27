@@ -3,6 +3,7 @@ import nme.display.Sprite;
 import pug.render.Render;
 import pug.render.RenderGroup;
 import gaxe.Debug;
+import Creature;
 
 /**
  * ...
@@ -17,28 +18,60 @@ class Board extends Sprite
 	private var creatures:Array<Creature>;
 	private var map:RenderGroup;
 	
+	private var creatureLayer:Sprite;
+	private var groundLayer:Sprite;
+	
 	public function new() {
 		super();
 		
 		addChild( map = cast( Render.renderSymbol( GAM.lib.get("playscreen") ), RenderGroup ) );
 		map.render( 0 );		
 		
+		addChild( groundLayer = new Sprite() );
+		addChild( creatureLayer = new Sprite() );
+		
 		creatures = [];
 		
-		addChild( player = new Creature( TINY ) );
-		player.moveTo( 50, 50 );
-		player.setTarget( 100, 50 );
+		groundLayer.addChild( new Pool( SMALL, 8, 8 ) );
+		
+		creatureLayer.addChild( player = new Creature( TINY ) );
+		player.moveTo( 50, 0 );
 		creatures.push( player );
 		
-		var c:CreatureAI = new CreatureAI( SMALL, 100, 50 );
-		addChild( c );
-		creatures.push( c );		
+		spawnCreature( LARGE, 200, 50 );		
+		spawnCreature( LARGE, 20, 50 );		
+		spawnCreature( MEDIUM, 140, 10 );		
+		spawnCreature( MEDIUM, 140, 60 );		
+		spawnCreature( SMALL, 40, 60 );		
+	}
+	
+	private function spawnCreature( type:CREATURE_TYPE, x:Float, y:Float ):Creature {
+		var c:CreatureAI = new CreatureAI( type, x, y );
+		creatureLayer.addChild( c );
+		creatures.push( c );
+		return c;
+	}
+	
+	private function sortByY( c1:Creature, c2:Creature ):Int {
+		if ( c1.y == c2.y )
+			return 0;
+		if ( c1.y < c2.y )
+			return -1;
+		else
+			return 1;
+	}
+	
+	public function sortCreatures():Void {
+		creatures.sort( sortByY );
+		for ( i in 0...creatures.length )
+			creatureLayer.setChildIndex( creatures[ i ], i );
 	}
 	
 	public function update( timeElapsed:Float ):Void {
 		for ( c in creatures ) {
 			c.update( timeElapsed );
 		}
+		sortCreatures();
 		var c1:Creature;
 		var c2:Creature;
 		var dead:Array<Creature> = [];
@@ -77,7 +110,7 @@ class Board extends Sprite
 		}
 		
 		for ( c in dead ) {
-			removeChild( c );
+			creatureLayer.removeChild( c );
 			creatures.remove( c );
 		}
 	}
@@ -87,7 +120,6 @@ class Board extends Sprite
 	}
 	
 	public function bornCreature( c1:Creature, c2:Creature ):Void {
-		// TODO
 		c1.setFull( false );
 		c2.setFull( false );
 	}

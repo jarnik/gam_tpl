@@ -39,7 +39,6 @@ class Creature extends Grid {
 		}
 		
 		full = false;
-		target = new Point();
 		position = new Point();
 		speed = 80;
 	}
@@ -52,6 +51,8 @@ class Creature extends Grid {
 	}
 	
 	public function setTarget( x:Float, y:Float ):Void {
+		if ( target == null )
+			target = new Point();
 		target.x = x;
 		target.y = y;
 	}
@@ -81,18 +82,20 @@ class Creature extends Grid {
 	}
 	
 	public function update( timeElapsed:Float ):Void {
-		var direction:Point = target.clone();
-		direction = direction.subtract( position );
-		var threshold:Float = 1;
-		if ( direction.length < threshold ) {
-			onTargetReached();
-			return;
+		if ( target != null ) {
+			var direction:Point = target.clone();
+			direction = direction.subtract( position );
+			var threshold:Float = 1;
+			if ( direction.length < threshold ) {
+				onTargetReached();
+				return;
+			}
+			
+			var d:Float = Math.min( direction.length, timeElapsed * speed );
+			direction.normalize( d );
+			
+			position = position.add( direction );
+			moveTo( position.x, position.y );
 		}
-		
-		var d:Float = Math.min( direction.length, timeElapsed * speed );
-		direction.normalize( d );
-		
-		position = position.add( direction );
-		moveTo( position.x, position.y );
 	}
 }
