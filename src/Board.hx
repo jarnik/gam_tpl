@@ -24,6 +24,7 @@ class Board extends Sprite
 {
 	public static inline var W:Float = 640;
 	public static inline var H:Float = 240;
+	public static inline var SPAWN_OFFSET:Float = 35;
 	
 	private var player:Player;
 	private var creatures:Array<Creature>;
@@ -86,7 +87,7 @@ class Board extends Sprite
 		addPool( LARGE, "V" );
 		
 		var r:Render = map.fetch( "T" );
-		creatureLayer.addChild( player = new Player( r.x, r.y ) );
+		creatureLayer.addChild( player = new Player( r.x, - SPAWN_OFFSET ) );
 		creatures.push( player );
 		
 		distributeCreatures();
@@ -239,8 +240,8 @@ class Board extends Sprite
 			player.alive = true;
 			addCreature( player );
 			var r:Render = map.fetch( "T" );
-			player.moveTo( r.x, r.y );
-			player.setTarget( r.x, r.y );
+			player.moveTo( r.x, - SPAWN_OFFSET );
+			player.setTarget( r.x, - SPAWN_OFFSET );
 			player.setTaint( null );
 		} else {
 			for ( p in pools ) 
