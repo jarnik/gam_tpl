@@ -4,5 +4,5 @@
  x SHIFT + click to teleport
  x randomly distribute set number of creatures
  x right/left boundless arena
- - title screen
- - how to play screen
+ x title screen
+ x how to play screen

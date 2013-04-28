@@ -3,7 +3,7 @@
 	<app title="ld26" file="build" main="GAM" version="0.0.1" company="Jarnik" />
 	
 	<window background="0x303030" width="640" height="480" fps="30" orientation="portrait" resizable="true" if="web" />
-	<window background="0x303030" width="0" height="0" fps="30" orientation="landscape" fullscreen="true" unless="web" />
+	<window background="0x303030" width="640" height="480" fps="30" orientation="landscape" fullscreen="false" unless="web" />
  	
 	<set name="BUILD_DIR" value="bin" />
 	
