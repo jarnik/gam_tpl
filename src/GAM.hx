@@ -61,8 +61,8 @@ class GAM extends Gaxe {
 	override private function init():Void {
 		super.init();
 		SoundLib.autoInit();
-		//switchScene( TitleScene ); 
-		switchScene( PlayScene ); 
+		switchScene( TitleScene ); 
+		//switchScene( PlayScene ); 
 	}
 	
 	
