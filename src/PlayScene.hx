@@ -1,5 +1,7 @@
 package;
+import gaxe.Gaxe;
 import gaxe.Scene;
+import gaxe.GameLog;
 import nme.events.KeyboardEvent;
 import nme.ui.Keyboard;
 import pug.render.RenderGroupStates;
@@ -29,7 +31,7 @@ class PlayScene extends Scene
  
 	override private function create():Void {
 		addChild( board = new Board() );
-		board.y = 120;
+		board.onMenuClicked.bindVoid( onMenuClicked );
 		
 		addChild( overlays = cast( Render.renderSymbol( GAM.lib.get("overlays") ), RenderGroupStates ) );
 		//map.switchState( "main" );
@@ -71,6 +73,7 @@ class PlayScene extends Scene
 	
 	override private function handleSwitchState(id:Dynamic):Bool 
 	{
+		GameLog.log( { state: "PlayState", action: Std.string( id ) } );
 		switch ( id ) {
 			case STATE_PLAY:
 				hDir = 0;
@@ -143,6 +146,10 @@ class PlayScene extends Scene
 	private function onContinueClick( e:MouseEvent ):Void {
 		switchState( STATE_PLAY );
 		refocus();
+	}
+	
+	private function onMenuClicked():Void {
+		Gaxe.head.switchScene( TitleScene );
 	}
 	
 }

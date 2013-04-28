@@ -3,6 +3,7 @@ package;
 import gaxe.Gaxe;
 import gaxe.Scene;
 import gaxe.Debug;
+import gaxe.GameLog;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 import nme.events.KeyboardEvent;
@@ -26,6 +27,12 @@ class GuideScene extends Scene
 		
 		//title.fetch("planetix_logo439").onClick( onTitleClicked );
 		howto.fetch("btnContinue").onEvents( [ MouseEvent.MOUSE_UP ], onContinueClicked );
+	}
+	
+	override private function reset():Void 
+	{
+		super.reset();
+		GameLog.log( { state: "HowtoState", action: "" } );
 	}
 
     override public function update( elapsed:Float ):Void {

@@ -1,11 +1,14 @@
 package ;
 import nme.display.Sprite;
+import nme.events.MouseEvent;
 import nme.geom.Point;
 import pug.render.Render;
 import pug.render.RenderGroup;
 import gaxe.Debug;
 import Creature;
 import pug.render.RenderGroupStates;
+
+import hsl.haxe.DirectSignaler;
 
 typedef RACE_CONF = {
 	size:CREATURE_TYPE,
@@ -34,15 +37,17 @@ class Board extends Sprite
 	private var groundLayer:Sprite;
 	private var pheromoneLayer:Sprite;
 	
+	public var onMenuClicked:DirectSignaler<Void>;
+	
 	public function new() {
 		super();
 		
-		addChild( map = cast( Render.renderSymbol( GAM.lib.get("playscreen") ), RenderGroupStates ) );
-		map.switchState( "main" );
-		
+		var screen:RenderGroupStates;
+		addChild( screen = cast( Render.renderSymbol( GAM.lib.get("playscreen") ), RenderGroupStates ) );
+		map = cast( screen.fetch("board"), RenderGroupStates );
 		map.addSticker( "board", boardContent = new Sprite() );
 		map.addStickerHideRenders( "board" );
-		//map.addStickerHideRenders( "bgr" );
+		
 		map.addStickerHideRenders( "Q" );
 		map.addStickerHideRenders( "T" );
 		map.addStickerHideRenders( "P" );
@@ -51,6 +56,9 @@ class Board extends Sprite
 		map.addStickerHideRenders( "M" );
 		
 		map.render( 0, false );
+		screen.fetch("btnMenu").onClick( onMenuClick );
+		
+		onMenuClicked = new DirectSignaler(this);
 		
 		boardContent.addChild( groundLayer = new Sprite() );
 		boardContent.addChild( pheromoneLayer = new Sprite() );
@@ -259,6 +267,7 @@ class Board extends Sprite
 		c2.setFull( false );
 		var p:Point = Point.interpolate( c1.position, c2.position, 0.5 );
 		var c:Creature = new CreatureAI( c1.size, p.x, p.y );
+		raceCounts[ Type.enumIndex( c.size ) - 1 ]++;
 		pendingSpawns.push( c );
 	}
 	
@@ -292,4 +301,7 @@ class Board extends Sprite
 		player.setTarget( x, y );
 	}
 	
+	private function onMenuClick( e:MouseEvent ):Void {
+		onMenuClicked.dispatch();
+	}
 }

@@ -3,6 +3,8 @@ package;
 import gaxe.Gaxe;
 import gaxe.Scene;
 import gaxe.Debug;
+import gaxe.SoundLib;
+import gaxe.GameLog;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 import nme.events.KeyboardEvent;
@@ -27,6 +29,8 @@ class TitleScene extends Scene
 		//title.fetch("planetix_logo439").onClick( onTitleClicked );
 		title.fetch("btnStart").onEvents( [ MouseEvent.MOUSE_UP ], onTitleClicked );
 		title.fetch("btnHowto").onEvents( [ MouseEvent.MOUSE_UP ], onHowtoClicked );
+		
+		SoundLib.playMusic( "assets/music/24 LD26.mp3" );
 		
         /*Levels.current = 0;
 
@@ -53,6 +57,7 @@ class TitleScene extends Scene
 	
 	override private function reset():Void 
 	{
+		GameLog.log( { state: "TitleState", action: "" } );
 		super.reset();
 		title.stop();
 		title.play();
