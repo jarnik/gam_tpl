@@ -7,6 +7,7 @@ import nme.ui.Keyboard;
 import pug.render.RenderGroupStates;
 import pug.render.Render;
 import Creature;
+import gaxe.SoundLib;
 import gaxe.Debug;
 
 import nme.events.MouseEvent;
@@ -81,6 +82,7 @@ class PlayScene extends Scene
 				board.reset();
 				overlays.play( false, 30, "play" );
 			case STATE_FAIL:
+				SoundLib.play("assets/sfx/Lose.mp3");
 				overlays.play( false, 30, "gameover" );
 			default:
 		}

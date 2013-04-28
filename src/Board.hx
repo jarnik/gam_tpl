@@ -6,6 +6,7 @@ import pug.render.Render;
 import pug.render.RenderGroup;
 import gaxe.Debug;
 import Creature;
+import gaxe.SoundLib;
 import pug.render.RenderGroupStates;
 
 import hsl.haxe.DirectSignaler;
@@ -89,6 +90,8 @@ class Board extends Sprite
 		creatures.push( player );
 		
 		distributeCreatures();
+		
+		SoundLib.play("assets/sfx/Start.mp3");
 	}
 	
 	private function distributeCreatures():Void {
@@ -259,6 +262,15 @@ class Board extends Sprite
 	}
 	
 	public function devourCreature( c:Creature ):Void {
+		switch ( c.size ) {
+			case TINY:
+				SoundLib.play("assets/sfx/devour.mp3");
+			case SMALL:
+				SoundLib.play("assets/sfx/devour 3.mp3");
+			case MEDIUM:
+				SoundLib.play("assets/sfx/devour 3.mp3");
+			default:
+		}
 		c.alive = false;
 	}
 	
@@ -268,6 +280,7 @@ class Board extends Sprite
 		var p:Point = Point.interpolate( c1.position, c2.position, 0.5 );
 		var c:Creature = new CreatureAI( c1.size, p.x, p.y );
 		raceCounts[ Type.enumIndex( c.size ) - 1 ]++;
+		SoundLib.play("assets/sfx/birth.mp3");
 		pendingSpawns.push( c );
 	}
 	
